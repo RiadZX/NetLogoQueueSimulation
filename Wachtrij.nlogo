@@ -1,13 +1,28 @@
+to setup
+  clear-all
 
+  ask patches [
+    set pcolor 8
+  ]
+
+  ask patches with [(pxcor + pycor) mod 2 = 0]
+  [
+    set pcolor  106
+  ]
+end
+
+to go
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+209
 10
-647
-448
+603
+524
 -1
 -1
-13.0
+30.0
 1
 10
 1
@@ -17,15 +32,49 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-6
+6
+-8
+8
 0
 0
 1
 ticks
 30.0
+
+BUTTON
+28
+45
+91
+78
+NIL
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+24
+99
+87
+132
+NIL
+go
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -369,7 +418,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
