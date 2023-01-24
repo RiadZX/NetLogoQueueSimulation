@@ -5,15 +5,18 @@ customers-own[
   location
   action
   waitedTime
+  actionTime
+  actionActive
 ]
 workers-own [
- location
- actionsDone
+  location ;; queue
+  actionsDone ;; amount of actions the worked has done
+  acceptAction ;; action that the worker can accept
+  actionActive
 ]
 
 to setup
   clear-all
-
   ;;create grid
   ask patches [
     set pcolor 8
@@ -34,35 +37,45 @@ to setup
   ;;initialize workers
   create-workers 4
   ask worker 0[
-   set location 1
-   set actionsDone 0
-   set xcor -3
-   set ycor 8
-   set shape "person"
-   set color 85
+    set location 1
+    set acceptAction 0
+    set actionsDone 1
+    set actionActive 0
+    set xcor -3
+    set ycor 8
+    set shape "person"
+    set color 85
+
   ]
   ask worker 1[
-   set location 2
-   set actionsDone 0
-   set xcor -1
+    set location 2
+    set actionsDone 0
+    set acceptAction 2
+    set actionActive 0
+    set xcor -1
     set ycor 8
-   set shape "person"
+    set shape "person"
     set color 85
+
   ]
   ask worker 2[
-   set location 3
-   set actionsDone 0
-   set xcor 1
-   set ycor 8
+    set location 3
+    set actionsDone 0
+    set actionActive 0
+    set acceptAction 3
+    set xcor 1
+    set ycor 8
     set shape "person"
     set color 85
   ]
   ask worker 3[
-   set location 4
-   set actionsDone 0
-   set xcor 3
-   set ycor 8
-   set shape "person"
+    set location 4
+    set actionActive 0
+    set actionsDone 0
+    set acceptAction 3
+    set xcor 3
+    set ycor 8
+    set shape "person"
     set color 85
   ]
 
@@ -73,42 +86,41 @@ to setup
   ;;location 4 = queue 4
   ;;location 5 = done, exit
 
-  create-customers 60
+  create-customers 500
   ask customers[
-  set shape "person"
-  set color 66
-  set xcor -6
-  set ycor -8
-  set location 0
-  set action 0
+    set shape "person"
+    set color 66
+    set xcor -6
+    set ycor -8
+    set location 0
+    set action 0
+    set actionActive 0
   ]
   ;; assign actions to percentages of the customers
   assign-actions
-  ;;manually override
-  ;;ask n-of (0.4 * count customers) customers with [action = 0] [set action 2]
-  ;;ask n-of (0.2 * count customers) customers [set action 3]
-  ;;ask n-of (0.4 * count customers) customers with [action = 0] [set action 1]
-
-
 
 end
 
 to go
-
+  ask customers
+  [
+    ifelse location = 0
+    [go-to-line]
+    [move-in-line]
+  ]
 end
 
 to assign-actions
-  let current-action 1
+  ;;let current-action 1
   let total-customers count customers
-  let percentage 1 / 3
-  repeat (total-customers / (total-customers * percentage)) [
-    ask n-of (percentage * total-customers) customers with [action = 0] [set action current-action]
-    set current-action current-action + 1
-  ]
+  ask n-of (0.8 * total-customers) customers with [action = 0] [set action 1] ;;percentage with action 1
+  ask n-of (0.15 * total-customers) customers with [action = 0] [set action 2];;percentage with action 2
+  ask n-of (0.05 * total-customers) customers with [action = 0] [set action 3];;percentage with action 3
 end
 
 ;;customer functions
 to go-to-line
+  ;;go to the line, count amount of people available to check the best one
 
 end
 
@@ -128,16 +140,15 @@ end
 to start-action-worker
 
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
-514
-16
-1117
-804
+414
+20
+918
+678
 -1
 -1
-45.824
+38.2
 1
 10
 1
@@ -158,10 +169,10 @@ ticks
 30.0
 
 BUTTON
-28
-45
-91
+15
+16
 78
+49
 NIL
 setup
 NIL
@@ -175,10 +186,10 @@ NIL
 1
 
 BUTTON
-24
-99
-87
-132
+15
+59
+78
+92
 NIL
 go
 NIL
@@ -192,10 +203,10 @@ NIL
 1
 
 MONITOR
-51
-211
-109
-256
+17
+157
+75
+202
 Action 1
 count customers with [action = 1]
 17
@@ -203,10 +214,10 @@ count customers with [action = 1]
 11
 
 MONITOR
-56
-272
-114
-317
+18
+210
+76
+255
 Action 2
 count customers with [action = 2]
 17
@@ -214,10 +225,10 @@ count customers with [action = 2]
 11
 
 MONITOR
-55
-339
-113
-384
+18
+264
+76
+309
 Action 3
 count customers with [action = 3]
 17
@@ -225,10 +236,10 @@ count customers with [action = 3]
 11
 
 MONITOR
-127
-225
-197
-270
+16
+100
+86
+145
 customers
 count customers
 17
