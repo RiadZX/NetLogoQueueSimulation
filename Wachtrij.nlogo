@@ -73,7 +73,7 @@ to setup
   ;;location 4 = queue 4
   ;;location 5 = done, exit
 
-  create-customers 600
+  create-customers 60
   ask customers[
   set shape "person"
   set color 66
