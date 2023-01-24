@@ -125,9 +125,6 @@ to exit-line
 end
 
 ;;worker functions
-to start-action-worker
-
-end
 
 @#$#@#$#@
 GRAPHICS-WINDOW
