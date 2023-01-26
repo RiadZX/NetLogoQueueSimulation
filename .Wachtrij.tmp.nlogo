@@ -1,9 +1,9 @@
 globals[
- customersWaiting0
- customersWaiting1
- customersWaiting2
- customersWaiting3
- queueLimit
+  customersWaiting0
+  customersWaiting1
+  customersWaiting2
+  customersWaiting3
+  queueLimit
 ]
 
 breed[customers customer]
@@ -45,63 +45,47 @@ to setup
   ]
   ;;initialize workers
   create-workers 4
-  ask worker 0[
-    set location 0
+  ask workers[
     set actionsDone 0
-    set actionActive true
-    set xcor -3
+    set actionActive false
     set ycor 8
     set shape "person"
     set color 85
+  ]
+  ask worker 0[
+    set location 0
+    set xcor -3
     set plabel actionAccepted0
 
   ]
   ask worker 1[
     set location 1
-    set actionsDone 0
-    set actionActive true
     set xcor -1
-    set ycor 8
-    set shape "person"
-    set color 85
-set plabel actionAccepted1
+    set plabel actionAccepted1
   ]
   ask worker 2[
     set location 2
-    set actionsDone 0
-    set actionActive true
-
     set xcor 1
-    set ycor 8
-    set shape "person"
-    set color 85
     set plabel actionAccepted2
   ]
   ask worker 3[
-    set location 0
-    set actionActive true
-    set actionsDone 0
-
+    set location 3
     set xcor 3
-    set ycor 8
-    set shape "person"
-    set color 85
     set plabel actionAccepted3
   ]
 
 
 
-  ;;location 0 = entrance
+  ;;location -1 = entrance
+  ;;location 0 = queue 0
   ;;location 1 = queue 1
   ;;location 2 = queue 2
   ;;location 3 = queue 3
-  ;;location 4 = queue 4
-  ;;location 5 = done, exit
+  ;;location 4 = done, exit
 
   create-customers 500
   ask customers[
     set shape "person"
-    set color 66
     set xcor -6
     set ycor -8
     set location -1
@@ -110,7 +94,6 @@ set plabel actionAccepted1
   ]
   ;; assign actions to percentages of the customers
   assign-actions
-
 end
 
 to go
@@ -122,10 +105,7 @@ to go
     [move-in-line]
   ]
   calculate_waiting
-  print word "Customers waiting in 0: " customersWaiting0
-  print word "Customers waiting in 1: " customersWaiting1
-  print word "Customers waiting in 2: " customersWaiting2
-  print word "Customers waiting in 3: " customersWaiting3
+
   tick
 end
 
@@ -148,47 +128,62 @@ to go-to-line
     if actionAccepted0 = action [
       ;;add check for best. add for all still not done
       if last best >= customersWaiting0 [
+        if customersWaiting0 < queueLimit[
         set best replace-item 0 best 0
         set best replace-item 1 best customersWaiting0
-       ]
+        ]
+      ]
     ]
     if actionAccepted1 = action [
       if last best >= customersWaiting1 [
+        if customersWaiting1 < queueLimit[
         set best replace-item 0 best 1
-      set best replace-item 1 best customersWaiting1
+        set best replace-item 1 best customersWaiting1
+        ]
       ]
-
     ]
     if actionAccepted2 = action [
       if last best >= customersWaiting2 [
-    set best replace-item 0 best 2
-      set best replace-item 1 best customersWaiting2
+        if customersWaiting2 < queueLimit[
+        set best replace-item 0 best 2
+        set best replace-item 1 best customersWaiting2
+        ]
       ]
     ]
     if actionAccepted3 = action [
       if last best >= customersWaiting3 [
-    set best replace-item 0 best 3
-      set best replace-item 1 best customersWaiting3
+        if customersWaiting3 < queueLimit[
+        set best replace-item 0 best 3
+        set best replace-item 1 best customersWaiting3
+        ]
       ]
     ]
   ]
-
+  ;;A + B = 6 (A = customers waiting, B= coordinates)
+  ;;so to get y cords -> B = 6 - A
+  ;;
 
   if first best = 0[
-    ;;check if queue is full
-    if customersWaiting
     set xcor -3
     set location first best
+    set ycor 6 - customersWaiting0
+
   ]
   if first best = 1[
     set xcor -1
-  set location first best]
+    set location first best
+    set ycor 6 - customersWaiting1
+  ]
   if first best = 2[
     set xcor 1
-  set location first best]
+    set location first best
+    set ycor 6 - customersWaiting2
+  ]
   if first best = 3[
     set xcor 3
-  set location first best]
+    set location first best
+    set ycor 6 - customersWaiting3
+  ]
   show best
 
 end
@@ -331,7 +326,7 @@ CHOOSER
 actionAccepted0
 actionAccepted0
 1 2 3
-0
+2
 
 CHOOSER
 115
@@ -341,7 +336,7 @@ CHOOSER
 actionAccepted1
 actionAccepted1
 1 2 3
-1
+0
 
 CHOOSER
 116
@@ -351,7 +346,7 @@ CHOOSER
 actionAccepted2
 actionAccepted2
 1 2 3
-2
+1
 
 CHOOSER
 117
