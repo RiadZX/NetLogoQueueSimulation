@@ -200,9 +200,15 @@ to move-in-line
     ;;set actionActive
     ;;wait add time
     ;;if return = true, set it to false and reset to spawn
-    ;; if return is false go to exit and do necessary stuff to stop.
+    ;; if return is false go to exit and do necessary va
 
   ]
+
+end
+
+
+
+to exit-line
 
 end
 
