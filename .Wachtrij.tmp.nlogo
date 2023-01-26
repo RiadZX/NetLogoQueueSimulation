@@ -1,9 +1,9 @@
 globals[
-  customersWaiting0
-  customersWaiting1
-  customersWaiting2
-  customersWaiting3
-  queueLimit
+ customersWaiting0
+ customersWaiting1
+ customersWaiting2
+ customersWaiting3
+ queueLimit
 ]
 
 breed[customers customer]
@@ -64,7 +64,7 @@ to setup
     set ycor 8
     set shape "person"
     set color 85
-    set plabel actionAccepted1
+set plabel actionAccepted1
   ]
   ask worker 2[
     set location 2
@@ -150,25 +150,25 @@ to go-to-line
       if last best >= customersWaiting0 [
         set best replace-item 0 best 0
         set best replace-item 1 best customersWaiting0
-      ]
+       ]
     ]
     if actionAccepted1 = action [
       if last best >= customersWaiting1 [
         set best replace-item 0 best 1
-        set best replace-item 1 best customersWaiting1
+      set best replace-item 1 best customersWaiting1
       ]
 
     ]
     if actionAccepted2 = action [
       if last best >= customersWaiting2 [
-        set best replace-item 0 best 2
-        set best replace-item 1 best customersWaiting2
+    set best replace-item 0 best 2
+      set best replace-item 1 best customersWaiting2
       ]
     ]
     if actionAccepted3 = action [
       if last best >= customersWaiting3 [
-        set best replace-item 0 best 3
-        set best replace-item 1 best customersWaiting3
+    set best replace-item 0 best 3
+      set best replace-item 1 best customersWaiting3
       ]
     ]
   ]
@@ -176,18 +176,19 @@ to go-to-line
 
   if first best = 0[
     ;;check if queue is full
+    if customersWaiting
     set xcor -3
     set location first best
   ]
   if first best = 1[
     set xcor -1
-    set location first best]
+  set location first best]
   if first best = 2[
     set xcor 1
-    set location first best]
+  set location first best]
   if first best = 3[
     set xcor 3
-    set location first best]
+  set location first best]
   show best
 
 end
