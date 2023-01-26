@@ -43,6 +43,8 @@ to setup
   [
     set pcolor 46
   ]
+  ask patch -6 -8 [set pcolor 56]
+  ask patch 6 -8 [set pcolor 15]
   ;;initialize workers
   create-workers 4
   ask workers[
@@ -85,7 +87,7 @@ to setup
 
   ;;action 1 = 2-5
   ;;action 2 = 3-10
-  ;;action 3 = 5-20
+  ;;action 3 = 5-20 + return to spawn
   create-customers 500
   ask customers[
     set shape "person"
@@ -222,11 +224,11 @@ end
 GRAPHICS-WINDOW
 303
 61
-606
-455
+689
+564
 -1
 -1
-22.7
+29.1
 1
 10
 1
@@ -332,7 +334,7 @@ CHOOSER
 actionAccepted0
 actionAccepted0
 1 2 3
-2
+0
 
 CHOOSER
 115
@@ -362,7 +364,7 @@ CHOOSER
 actionAccepted3
 actionAccepted3
 1 2 3
-0
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
