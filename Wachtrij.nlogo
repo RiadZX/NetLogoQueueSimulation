@@ -4,6 +4,7 @@ globals[
   customersWaiting2
   customersWaiting3
   queueLimit
+  customersDone
 ]
 
 breed[customers customer]
@@ -108,7 +109,7 @@ to go
   ask customers
   [
     calculate_waiting
-    if location != -4[
+    if location != 4[
       ifelse location = -1
       [go-to-line]
       [move-in-line]
@@ -199,15 +200,22 @@ end
 
 to move-in-line
   ;;check if you are at the counter
-  if ycor + 2 = 8 [
+  ifelse ycor + 2 = 8 [
     ;;start work
     set actionActive true
     ;;wait add time
     ifelse ticks-on-patch >= actionTime
     [
+      ifelse return = true[
+      set location -1
+      set xcor -6
+      set ycor -8
+      ][
       set location 4
       set xcor 6
       set ycor -8
+      ]
+
     ]
     [
       set ticks-on-patch ticks-on-patch + 1
@@ -215,9 +223,19 @@ to move-in-line
     ;;if return = true, set it to false and reset to spawn
     ;; if return is false go to exit and do necessary stuff to stop.
 
-    ;;check if space infront is empty.
 
-  ]
+  ][
+
+  let main-customer-x xcor
+  let main-customer-y ycor
+
+  ifelse any? customers with [xcor = main-customer-x and main-customer-y + 1 = ycor] [
+    ;;show "customer infront of me"
+  ][
+      ask customers with [xcor = main-customer-x and ycor = main-customer-y][
+         set ycor ycor + 1
+      ]
+  ]]
 
 
 
@@ -235,6 +253,7 @@ to calculate_waiting
   set customersWaiting1 count customers with [location = 1]
   set customersWaiting2 count customers with [location = 2]
   set customersWaiting3 count customers with [location = 3]
+  set customersDone count customers with [location = 4]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -258,17 +277,17 @@ GRAPHICS-WINDOW
 6
 -8
 8
-0
-0
+1
+1
 1
 ticks
-30.0
+165.0
 
 BUTTON
-73
-50
-136
-83
+6
+10
+69
+43
 NIL
 setup
 NIL
@@ -282,10 +301,10 @@ NIL
 1
 
 BUTTON
-73
-93
-136
-126
+78
+10
+141
+43
 NIL
 go
 NIL
@@ -299,9 +318,9 @@ NIL
 1
 
 MONITOR
-75
+81
 191
-133
+139
 236
 Action 1
 count customers with [action = 1]
@@ -332,9 +351,9 @@ count customers with [action = 3]
 11
 
 MONITOR
-74
+80
 134
-144
+150
 179
 customers
 count customers
@@ -343,9 +362,9 @@ count customers
 11
 
 CHOOSER
-150
+156
 49
-288
+294
 94
 actionAccepted0
 actionAccepted0
@@ -353,9 +372,9 @@ actionAccepted0
 0
 
 CHOOSER
-150
+156
 100
-288
+294
 145
 actionAccepted1
 actionAccepted1
@@ -363,9 +382,9 @@ actionAccepted1
 0
 
 CHOOSER
-151
+157
 156
-289
+295
 201
 actionAccepted2
 actionAccepted2
@@ -373,14 +392,60 @@ actionAccepted2
 1
 
 CHOOSER
-152
+158
 209
-290
+296
 254
 actionAccepted3
 actionAccepted3
 1 2 3
 2
+
+BUTTON
+151
+10
+241
+43
+go forever
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+PLOT
+787
+52
+987
+202
+customers done
+time
+done
+0.0
+500.0
+0.0
+500.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot customersDone"
+
+MONITOR
+1021
+68
+1122
+113
+customers done
+customersDone
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
