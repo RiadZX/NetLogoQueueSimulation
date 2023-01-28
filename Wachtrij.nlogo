@@ -5,6 +5,10 @@ globals[
   customersWaiting3
   queueLimit
   customersDone
+  averageWaitingAction1
+  averageWaitingAction2
+  averageWaitingAction3
+
 ]
 
 breed[customers customer]
@@ -17,18 +21,20 @@ customers-own[
   actionActive
   actionTime
   ticks-on-patch
+  timeInQueue
   return
 ]
+
 workers-own [
   location ;; queue
-  actionsDone ;; amount of actions the worked has done
 ]
 
+;;add check for invalid setups , improves behaviourspace speed
 to setup
   clear-all
   reset-ticks
 
-  set queueLimit 12
+  set queueLimit 14
   ;;create grid
   ask patches [
     set pcolor 8
@@ -44,14 +50,13 @@ to setup
   [
     set pcolor 46
   ]
+
   ask patch -6 -8 [set pcolor 56]
   ask patch 6 -8 [set pcolor 15]
   ;;initialize workers
   create-workers 4
 
   ask workers[
-    set actionsDone 0
-
     set ycor 8
     set shape "person"
     set color 85
@@ -87,6 +92,7 @@ to setup
   ;;action 1 = 2-5
   ;;action 2 = 3-10
   ;;action 3 = 5-20 + return to spawn
+
   create-customers 500
 
   ask customers[
@@ -98,6 +104,7 @@ to setup
     set actionActive 0
     set return false
     set ticks-on-patch 0
+    set timeInQueue 0
   ]
   ;; assign actions to percentages of the customers
   assign-actions
@@ -105,18 +112,24 @@ to setup
 end
 
 to go
-
+  calculate_waiting
+  if customersDone = 500 [stop]
   ask customers
   [
-    calculate_waiting
+
     if location != 4[
+
       ifelse location = -1
       [go-to-line]
       [move-in-line]
     ]
   ]
-  calculate_waiting
-
+  calculate_average
+  if customersDone = 188 [
+    ask customers with [location != 4][
+    show xcor
+    ]
+  ]
   tick
 end
 
@@ -126,7 +139,6 @@ to assign-actions
   ask n-of (0.8 * total-customers) customers with [action = 0] [set action 1 set actionTime ((random 3) + 2)] ;;percentage with action 1
   ask n-of (0.15 * total-customers) customers with [action = 0] [set action 2 set actionTime ((random 11) + 3)];;percentage with action 2
   ask n-of (0.05 * total-customers) customers with [action = 0] [set action 3 set return true set actionTime ((random 21) + 5)];;percentage with action 3
-
 end
 
 ;;customer functions
@@ -199,6 +211,7 @@ to go-to-line
 end
 
 to move-in-line
+  set timeInQueue timeInQueue + 1
   ;;check if you are at the counter
   ifelse ycor + 2 = 8 [
     ;;start work
@@ -207,45 +220,36 @@ to move-in-line
     ifelse ticks-on-patch >= actionTime
     [
       ifelse return = true[
-      set location -1
-      set xcor -6
-      set ycor -8
+;        set location -1
+;        set xcor -6
+;        set ycor -8
+;        set return false
+        set location 4
+        set xcor 6
+        set ycor -8
       ][
-      set location 4
-      set xcor 6
-      set ycor -8
+        set location 4
+        set xcor 6
+        set ycor -8
       ]
 
     ]
     [
       set ticks-on-patch ticks-on-patch + 1
     ]
-    ;;if return = true, set it to false and reset to spawn
-    ;; if return is false go to exit and do necessary stuff to stop.
-
 
   ][
+    let main-customer-x xcor
+    let main-customer-y ycor
 
-  let main-customer-x xcor
-  let main-customer-y ycor
-
-  ifelse any? customers with [xcor = main-customer-x and main-customer-y + 1 = ycor] [
-    ;;show "customer infront of me"
-  ][
+    ifelse any? customers with [xcor = main-customer-x and main-customer-y + 1 = ycor] [][
       ask customers with [xcor = main-customer-x and ycor = main-customer-y][
-         set ycor ycor + 1
+        set ycor ycor + 1
       ]
   ]]
 
-
-
-
 end
 
-;;worker functions
-to start-action-worker
-
-end
 
 ;;global functions
 to calculate_waiting
@@ -255,15 +259,26 @@ to calculate_waiting
   set customersWaiting3 count customers with [location = 3]
   set customersDone count customers with [location = 4]
 end
+
+to calculate_average
+  let customersaction1 count customers with [location = 4 and action = 1]
+  let customersaction2 count customers with [location = 4 and action = 2]
+  let customersaction3 count customers with [location = 4 and action = 3]
+
+  ifelse (customersaction1) = 0 [][ set averageWaitingAction1 (sum [timeInQueue] of customers with [location = 4 and action = 1])/(count customers with [location = 4 and action = 1])]
+  ifelse (customersaction2) = 0 [][ set averageWaitingAction2 (sum [timeInQueue] of customers with [location = 4 and action = 2])/(count customers with [location = 4 and action = 2])]
+  ifelse (customersaction3) = 0 [][ set averageWaitingAction3 (sum [timeInQueue] of customers with [location = 4 and action = 3])/(count customers with [location = 4 and action = 3])]
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-303
-44
-715
-581
+244
+10
+731
+645
 -1
 -1
-31.1
+36.85
 1
 10
 1
@@ -277,8 +292,8 @@ GRAPHICS-WINDOW
 6
 -8
 8
-1
-1
+0
+0
 1
 ticks
 165.0
@@ -305,7 +320,7 @@ BUTTON
 10
 141
 43
-NIL
+step
 go
 NIL
 1
@@ -318,10 +333,10 @@ NIL
 1
 
 MONITOR
-81
-191
-139
-236
+9
+115
+67
+160
 Action 1
 count customers with [action = 1]
 17
@@ -329,10 +344,10 @@ count customers with [action = 1]
 11
 
 MONITOR
-76
-244
-134
-289
+4
+168
+62
+213
 Action 2
 count customers with [action = 2]
 17
@@ -340,10 +355,10 @@ count customers with [action = 2]
 11
 
 MONITOR
-76
-298
-134
-343
+4
+222
+62
+267
 Action 3
 count customers with [action = 3]
 17
@@ -351,10 +366,10 @@ count customers with [action = 3]
 11
 
 MONITOR
-80
-134
-150
-179
+6
+58
+76
+103
 customers
 count customers
 17
@@ -362,51 +377,51 @@ count customers
 11
 
 CHOOSER
-156
-49
-294
-94
+91
+60
+229
+105
 actionAccepted0
 actionAccepted0
 1 2 3
 0
 
 CHOOSER
+91
+111
+229
 156
-100
-294
-145
 actionAccepted1
 actionAccepted1
 1 2 3
 0
 
 CHOOSER
-157
-156
-295
-201
+92
+167
+230
+212
 actionAccepted2
 actionAccepted2
 1 2 3
 1
 
 CHOOSER
-158
-209
-296
-254
+93
+220
+231
+265
 actionAccepted3
 actionAccepted3
 1 2 3
-2
+0
 
 BUTTON
-151
+144
 10
-241
+234
 43
-go forever
+NIL
 go
 T
 1
@@ -419,10 +434,10 @@ NIL
 1
 
 PLOT
-787
-52
-987
-202
+745
+13
+1161
+170
 customers done
 time
 done
@@ -431,19 +446,52 @@ done
 0.0
 500.0
 true
-false
+true
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot customersDone"
+"customers" 1.0 0 -16777216 true "" "plot customersDone"
 
 MONITOR
-1021
-68
-1122
-113
+746
+172
+1160
+217
 customers done
 customersDone
 0
+1
+11
+
+MONITOR
+746
+223
+946
+268
+averageWaitingAction1
+averageWaitingAction1
+3
+1
+11
+
+MONITOR
+956
+223
+1160
+268
+averageWaitingAction2
+averageWaitingAction2
+17
+1
+11
+
+MONITOR
+746
+274
+947
+319
+averageWaitingAction3
+averageWaitingAction3
+17
 1
 11
 
@@ -793,6 +841,36 @@ NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="10" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1200"/>
+    <metric>averageWaitingAction1</metric>
+    <metric>averageWaitingAction2</metric>
+    <metric>averageWaitingAction3</metric>
+    <enumeratedValueSet variable="actionAccepted3">
+      <value value="1"/>
+      <value value="2"/>
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="actionAccepted0">
+      <value value="1"/>
+      <value value="2"/>
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="actionAccepted1">
+      <value value="1"/>
+      <value value="2"/>
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="actionAccepted2">
+      <value value="1"/>
+      <value value="2"/>
+      <value value="3"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
