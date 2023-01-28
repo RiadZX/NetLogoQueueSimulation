@@ -215,8 +215,6 @@ to move-in-line
     ;;if return = true, set it to false and reset to spawn
     ;; if return is false go to exit and do necessary stuff to stop.
 
-    ;;check if space infront is empty.
-
   ]
 
 
