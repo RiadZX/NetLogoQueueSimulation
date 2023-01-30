@@ -116,9 +116,7 @@ to go
   if customersDone = 500 [stop]
   ask customers
   [
-
     if location != 4[
-
       ifelse location = -1
       [go-to-line]
       [move-in-line]
@@ -414,7 +412,7 @@ CHOOSER
 actionAccepted3
 actionAccepted3
 1 2 3
-0
+2
 
 BUTTON
 144
@@ -837,7 +835,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
