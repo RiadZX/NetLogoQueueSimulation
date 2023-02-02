@@ -170,8 +170,8 @@ to go-to-line
       ]
     ]
     ]
-    foreach actionAccepted1 [x ->
-    if x = action [
+    foreach actionAccepted [x ->
+    if actionAccepted1 = action [
       if last best >= customersWaiting1 [
         if customersWaiting1 < queueLimit[
           set best replace-item 0 best 1
@@ -179,9 +179,7 @@ to go-to-line
         ]
       ]
     ]
-    ]
-    foreach actionAccepted2 [x ->
-    if x = action [
+    if actionAccepted2 = action [
       if last best >= customersWaiting2 [
         if customersWaiting2 < queueLimit[
           set best replace-item 0 best 2
@@ -189,16 +187,13 @@ to go-to-line
         ]
       ]
     ]
-    ]
-    foreach actionAccepted3 [x ->
-    if x = action [
+    if actionAccepted3 = action [
       if last best >= customersWaiting3 [
         if customersWaiting3 < queueLimit[
           set best replace-item 0 best 3
           set best replace-item 1 best customersWaiting3
         ]
       ]
-    ]
     ]
   ]
   ;;A + B = 6 (A = customers waiting, B= coordinates)
@@ -499,7 +494,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-1
+123
 1
 0
 String
@@ -510,7 +505,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-12
+123
 1
 0
 String
@@ -521,7 +516,7 @@ INPUTBOX
 220
 256
 actionAcceptedList2
-23
+123
 1
 0
 String
@@ -532,7 +527,7 @@ INPUTBOX
 230
 339
 actionAcceptedList3
-3
+123
 1
 0
 String
