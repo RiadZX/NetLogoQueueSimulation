@@ -1,3 +1,11 @@
+;to go
+; let actionsstringlist explode actions
+; set actionsstringlist read-from-list actionsstringlist
+; show actionsstringlist
+;end
+;
+
+
 globals[
   customersWaiting0
   customersWaiting1
@@ -8,7 +16,10 @@ globals[
   averageWaitingAction1
   averageWaitingAction2
   averageWaitingAction3
-
+  actionAccepted0
+  actionAccepted1
+  actionAccepted2
+  actionAccepted3
 ]
 
 breed[customers customer]
@@ -64,7 +75,7 @@ to setup
   ask worker 0[
     set location 0
     set xcor -3
-    set plabel actionAccepted0
+    set plabel actionAcceptedList0
   ]
   ask worker 1[
     set location 1
@@ -108,7 +119,7 @@ to setup
   ]
   ;; assign actions to percentages of the customers
   assign-actions
-
+  convert_actions
 end
 
 to go
@@ -268,6 +279,27 @@ to calculate_average
   ifelse (customersaction3) = 0 [][ set averageWaitingAction3 (sum [timeInQueue] of customers with [location = 4 and action = 3])/(count customers with [location = 4 and action = 3])]
 
 end
+
+to convert_actions
+let actionsstringlist0 explode actionAcceptedList0
+ set actionAccepted0 read-from-list actionsstringlist0
+  let actionsstringlist1 explode actionAcceptedList1
+ set actionAccepted1 read-from-list actionsstringlist1
+  let actionsstringlist2 explode actionAcceptedList2
+ set actionAccepted2 read-from-list actionsstringlist2
+  let actionsstringlist3 explode actionAcceptedList3
+ set actionAccepted3 read-from-list actionsstringlist3
+ show actionAccepted3
+end
+
+to-report explode [s]
+  report map [n -> item n s] n-values (length s) [n -> n]
+end
+to-report read-from-list [ x ]
+  report ifelse-value is-list? x
+    [ map read-from-list x ]
+    [ read-from-string x ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 244
@@ -374,46 +406,6 @@ count customers
 1
 11
 
-CHOOSER
-91
-60
-229
-105
-actionAccepted0
-actionAccepted0
-1 2 3
-0
-
-CHOOSER
-91
-111
-229
-156
-actionAccepted1
-actionAccepted1
-1 2 3
-0
-
-CHOOSER
-92
-167
-230
-212
-actionAccepted2
-actionAccepted2
-1 2 3
-1
-
-CHOOSER
-93
-220
-231
-265
-actionAccepted3
-actionAccepted3
-1 2 3
-2
-
 BUTTON
 144
 10
@@ -492,6 +484,50 @@ averageWaitingAction3
 17
 1
 11
+
+INPUTBOX
+91
+51
+227
+111
+actionAcceptedList0
+12
+1
+0
+String
+
+INPUTBOX
+88
+118
+226
+178
+actionAcceptedList1
+12
+1
+0
+String
+
+INPUTBOX
+81
+196
+220
+256
+actionAcceptedList2
+12
+1
+0
+String
+
+INPUTBOX
+78
+279
+230
+339
+actionAcceptedList3
+12
+1
+0
+String
 
 @#$#@#$#@
 ## WHAT IS IT?
