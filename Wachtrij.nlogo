@@ -20,6 +20,7 @@ globals[
   actionAccepted1
   actionAccepted2
   actionAccepted3
+  tickspercustomer
 ]
 
 breed[customers customer]
@@ -44,6 +45,7 @@ workers-own [
 to setup
   clear-all
   reset-ticks
+  set tickspercustomer 3
 
   set queueLimit 14
   ;;create grid
@@ -104,27 +106,44 @@ to setup
   ;;action 2 = 3-10
   ;;action 3 = 5-20 + return to spawn
 
-  create-customers 500
-
-  ask customers[
-    set shape "person"
-    set xcor -6
-    set ycor -8
-    set location -1
-    set action 0
-    set actionActive 0
-    set return false
-    set ticks-on-patch 0
-    set timeInQueue 0
-  ]
+  ;  create-customers 500
+  ;
+  ;  ask customers[
+  ;    set shape "person"
+  ;    set xcor -6
+  ;    set ycor -8
+  ;    set location -1
+  ;    set action 0
+  ;    set actionActive 0
+  ;    set return false
+  ;    set ticks-on-patch 0
+  ;    set timeInQueue 0
+  ;  ]
   ;; assign actions to percentages of the customers
-  assign-actions
+
+  ;;assign-actions
   convert_actions
 end
 
 to go
+  ;;geef ze een random action volgens de percentages
+  if  remainder ticks 3 = 0 and ticks < 500[
+    create-customers 1 [
+      set shape "person"
+      set xcor -6
+      set ycor -8
+      set location -1
+      set actionActive 0
+      set return false
+      set ticks-on-patch 0
+      set timeInQueue 0
+      assign-random-action
+
+    ]
+
+  ]
+
   calculate_waiting
-  if customersDone = 500 [stop]
   ask customers
   [
     if location != 4[
@@ -136,19 +155,25 @@ to go
   calculate_average
   if customersDone = 188 [
     ask customers with [location != 4][
-    show xcor
+      show xcor
     ]
   ]
   tick
 end
 
-to assign-actions
-  ;;let current-action 1
-  let total-customers count customers
-  ask n-of (0.8 * total-customers) customers with [action = 0] [set action 1 set actionTime ((random 3) + 2)] ;;percentage with action 1
-  ask n-of (0.15 * total-customers) customers with [action = 0] [set action 2 set actionTime ((random 11) + 3)];;percentage with action 2
-  ask n-of (0.05 * total-customers) customers with [action = 0] [set action 3 set return true set actionTime ((random 21) + 5)];;percentage with action 3
+to assign-random-action
+  let randomnumber random 100
+  if randomnumber >= 80 [set action 1 set actionTime ((random 3) + 2)]
+  if randomnumber >= 15 and randomnumber < 80 [set action 2 set actionTime ((random 11) + 3)]
+  if randomnumber >= 0 and randomnumber < 15[set action 3 set return true set actionTime ((random 21) + 5)]
 end
+;to assign-actions
+;  ;;let current-action 1
+;  let total-customers count customers
+;  ask n-of (0.8 * total-customers) customers with [action = 0] [set action 1 set actionTime ((random 3) + 2)] ;;percentage with action 1
+;  ask n-of (0.15 * total-customers) customers with [action = 0] [set action 2 set actionTime ((random 11) + 3)];;percentage with action 2
+;  ask n-of (0.05 * total-customers) customers with [action = 0] [set action 3 set return true set actionTime ((random 21) + 5)];;percentage with action 3
+;end
 
 ;;customer functions
 to go-to-line
@@ -160,45 +185,45 @@ to go-to-line
 
   repeat 4 [
     foreach actionAccepted0 [x ->
-    if x = action [
-      ;;add check for best. add for all still not done
-      if last best >= customersWaiting0 [
-        if customersWaiting0 < queueLimit[
-          set best replace-item 0 best 0
-          set best replace-item 1 best customersWaiting0
+      if x = action [
+        ;;add check for best. add for all still not done
+        if last best >= customersWaiting0 [
+          if customersWaiting0 < queueLimit[
+            set best replace-item 0 best 0
+            set best replace-item 1 best customersWaiting0
+          ]
         ]
       ]
-    ]
     ]
     foreach actionAccepted1 [x ->
-    if x = action [
-      if last best >= customersWaiting1 [
-        if customersWaiting1 < queueLimit[
-          set best replace-item 0 best 1
-          set best replace-item 1 best customersWaiting1
+      if x = action [
+        if last best >= customersWaiting1 [
+          if customersWaiting1 < queueLimit[
+            set best replace-item 0 best 1
+            set best replace-item 1 best customersWaiting1
+          ]
         ]
       ]
-    ]
     ]
     foreach actionAccepted2 [x ->
-    if x = action [
-      if last best >= customersWaiting2 [
-        if customersWaiting2 < queueLimit[
-          set best replace-item 0 best 2
-          set best replace-item 1 best customersWaiting2
+      if x = action [
+        if last best >= customersWaiting2 [
+          if customersWaiting2 < queueLimit[
+            set best replace-item 0 best 2
+            set best replace-item 1 best customersWaiting2
+          ]
         ]
       ]
-    ]
     ]
     foreach actionAccepted3 [x ->
-    if x = action [
-      if last best >= customersWaiting3 [
-        if customersWaiting3 < queueLimit[
-          set best replace-item 0 best 3
-          set best replace-item 1 best customersWaiting3
+      if x = action [
+        if last best >= customersWaiting3 [
+          if customersWaiting3 < queueLimit[
+            set best replace-item 0 best 3
+            set best replace-item 1 best customersWaiting3
+          ]
         ]
       ]
-    ]
     ]
   ]
   ;;A + B = 6 (A = customers waiting, B= coordinates)
@@ -237,10 +262,10 @@ to move-in-line
     ifelse ticks-on-patch >= actionTime
     [
       ifelse return = true[
-;        set location -1
-;        set xcor -6
-;        set ycor -8
-;        set return false
+        ;        set location -1
+        ;        set xcor -6
+        ;        set ycor -8
+        ;        set return false
         set location 4
         set xcor 6
         set ycor -8
@@ -289,15 +314,15 @@ to calculate_average
 end
 
 to convert_actions
-let actionsstringlist0 explode actionAcceptedList0
- set actionAccepted0 read-from-list actionsstringlist0
+  let actionsstringlist0 explode actionAcceptedList0
+  set actionAccepted0 read-from-list actionsstringlist0
   let actionsstringlist1 explode actionAcceptedList1
- set actionAccepted1 read-from-list actionsstringlist1
+  set actionAccepted1 read-from-list actionsstringlist1
   let actionsstringlist2 explode actionAcceptedList2
- set actionAccepted2 read-from-list actionsstringlist2
+  set actionAccepted2 read-from-list actionsstringlist2
   let actionsstringlist3 explode actionAcceptedList3
- set actionAccepted3 read-from-list actionsstringlist3
- show actionAccepted3
+  set actionAccepted3 read-from-list actionsstringlist3
+  show actionAccepted3
 end
 
 to-report explode [s]
@@ -306,7 +331,7 @@ end
 to-report read-from-list [ x ]
   report ifelse-value is-list? x
     [ map read-from-list x ]
-    [ read-from-string x ]
+  [ read-from-string x ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
