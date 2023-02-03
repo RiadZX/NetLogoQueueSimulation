@@ -1,9 +1,3 @@
-;to go
-; let actionsstringlist explode actions
-; set actionsstringlist read-from-list actionsstringlist
-; show actionsstringlist
-;end
-;
 
 
 globals[
@@ -46,33 +40,31 @@ to setup
   clear-all
   reset-ticks
   set tickspercustomer 3
-
   set queueLimit 14
   ;;create grid
   ask patches [
-    set pcolor 8
+    set pcolor 33
   ]
-  ;;create checker pattern
+  ;  ;;create checker pattern
   ask patches with [(pxcor + pycor) mod 2 = 0]
   [
-    set pcolor  106
+    set pcolor  35
   ]
 
   ;;create yellow line
   ask patches with [pycor = 7]
   [
-    set pcolor 46
+    set pcolor 3
   ]
 
-  ask patch -6 -8 [set pcolor 56]
-  ask patch 6 -8 [set pcolor 15]
+  ;  ask patch -6 -8 [set pcolor 56]
+  ; ask patch 6 -8 [set pcolor 15]
   ;;initialize workers
   create-workers 4
 
   ask workers[
     set ycor 8
-    set shape "person"
-    set color 85
+    set shape "person service"
   ]
   ask worker 0[
     set location 0
@@ -82,17 +74,17 @@ to setup
   ask worker 1[
     set location 1
     set xcor -1
-    set plabel actionAccepted1
+    set plabel actionAcceptedList1
   ]
   ask worker 2[
     set location 2
     set xcor 1
-    set plabel actionAccepted2
+    set plabel actionAcceptedList2
   ]
   ask worker 3[
     set location 3
     set xcor 3
-    set plabel actionAccepted3
+    set plabel actionAcceptedList3
   ]
 
   ;;location -1 = entrance
@@ -105,31 +97,16 @@ to setup
   ;;action 1 = 2-5
   ;;action 2 = 3-10
   ;;action 3 = 5-20 + return to spawn
-
-  ;  create-customers 500
-  ;
-  ;  ask customers[
-  ;    set shape "person"
-  ;    set xcor -6
-  ;    set ycor -8
-  ;    set location -1
-  ;    set action 0
-  ;    set actionActive 0
-  ;    set return false
-  ;    set ticks-on-patch 0
-  ;    set timeInQueue 0
-  ;  ]
-  ;; assign actions to percentages of the customers
-
-  ;;assign-actions
   convert_actions
+  check_if_setup_valid
 end
 
 to go
   ;;geef ze een random action volgens de percentages
-  if  remainder ticks 3 = 0 and ticks < 500[
+  if ticks > 600 [stop]
+  if  remainder ticks tickspercustomer = 0 and ticks < 500[
     create-customers 1 [
-      set shape "person"
+      set shape "person business"
       set xcor -6
       set ycor -8
       set location -1
@@ -153,11 +130,6 @@ to go
     ]
   ]
   calculate_average
-  if customersDone = 188 [
-    ask customers with [location != 4][
-      show xcor
-    ]
-  ]
   tick
 end
 
@@ -269,10 +241,12 @@ to move-in-line
         set location 4
         set xcor 6
         set ycor -8
+        set hidden? true
       ][
         set location 4
         set xcor 6
         set ycor -8
+        set hidden? true
       ]
 
     ]
@@ -322,7 +296,6 @@ to convert_actions
   set actionAccepted2 read-from-list actionsstringlist2
   let actionsstringlist3 explode actionAcceptedList3
   set actionAccepted3 read-from-list actionsstringlist3
-  show actionAccepted3
 end
 
 to-report explode [s]
@@ -332,6 +305,35 @@ to-report read-from-list [ x ]
   report ifelse-value is-list? x
     [ map read-from-list x ]
   [ read-from-string x ]
+end
+
+to check_if_setup_valid
+  let count1 0
+  let count2 0
+  let count3 0
+  foreach actionAccepted0 [x ->
+    if x = 1 [set count1 count1 + 1]
+    if x = 2 [set count2 count2 + 1]
+    if x = 3 [set count3 count3 + 1]
+  ]
+  foreach actionAccepted1 [x ->
+    if x = 1 [set count1 count1 + 1]
+    if x = 2 [set count2 count2 + 1]
+    if x = 3 [set count3 count3 + 1]
+  ]
+  foreach actionAccepted2 [x ->
+    if x = 1 [set count1 count1 + 1]
+    if x = 2 [set count2 count2 + 1]
+    if x = 3 [set count3 count3 + 1]
+  ]
+  foreach actionAccepted3 [x ->
+    if x = 1 [set count1 count1 + 1]
+    if x = 2 [set count2 count2 + 1]
+    if x = 3 [set count3 count3 + 1]
+  ]
+  show count1
+  show count2
+  show count3
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -524,7 +526,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-1
+123
 1
 0
 String
@@ -535,29 +537,29 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-12
+123
 1
 0
 String
 
 INPUTBOX
-81
-196
-220
-256
+88
+185
+227
+245
 actionAcceptedList2
-23
+123
 1
 0
 String
 
 INPUTBOX
-78
-279
-230
-339
+88
+252
+229
+312
 actionAcceptedList3
-3
+123
 1
 0
 String
@@ -778,6 +780,43 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person business
+false
+0
+Rectangle -1 true false 120 90 180 180
+Polygon -13345367 true false 135 90 150 105 135 180 150 195 165 180 150 105 165 90
+Polygon -7500403 true true 120 90 105 90 60 195 90 210 116 154 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 183 153 210 210 240 195 195 90 180 90 150 165
+Circle -7500403 true true 110 5 80
+Rectangle -7500403 true true 127 76 172 91
+Line -16777216 false 172 90 161 94
+Line -16777216 false 128 90 139 94
+Polygon -13345367 true false 195 225 195 300 270 270 270 195
+Rectangle -13791810 true false 180 225 195 300
+Polygon -14835848 true false 180 226 195 226 270 196 255 196
+Polygon -13345367 true false 209 202 209 216 244 202 243 188
+Line -16777216 false 180 90 150 165
+Line -16777216 false 120 90 150 165
+
+person service
+false
+0
+Polygon -7500403 true true 180 195 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285
+Polygon -1 true false 120 90 105 90 60 195 90 210 120 150 120 195 180 195 180 150 210 210 240 195 195 90 180 90 165 105 150 165 135 105 120 90
+Polygon -1 true false 123 90 149 141 177 90
+Rectangle -7500403 true true 123 76 176 92
+Circle -7500403 true true 110 5 80
+Line -13345367 false 121 90 194 90
+Line -16777216 false 148 143 150 196
+Rectangle -16777216 true false 116 186 182 198
+Circle -1 true false 152 143 9
+Circle -1 true false 152 166 9
+Rectangle -16777216 true false 179 164 183 186
+Polygon -2674135 true false 180 90 195 90 183 160 180 195 150 195 150 135 180 90
+Polygon -2674135 true false 120 90 105 90 114 161 120 195 150 195 150 135 120 90
+Polygon -2674135 true false 155 91 128 77 128 101
+Rectangle -16777216 true false 118 129 141 140
+Polygon -2674135 true false 145 91 172 77 172 101
 
 plant
 false

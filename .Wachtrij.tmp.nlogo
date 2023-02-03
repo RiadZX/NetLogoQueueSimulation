@@ -1,339 +1,4 @@
-;to go
-; let actionsstringlist explode actions
-; set actionsstringlist read-from-list actionsstringlist
-; show actionsstringlist
-;end
-;
 
-
-globals[
-  customersWaiting0
-  customersWaiting1
-  customersWaiting2
-  customersWaiting3
-  queueLimit
-  customersDone
-  averageWaitingAction1
-  averageWaitingAction2
-  averageWaitingAction3
-  actionAccepted0
-  actionAccepted1
-  actionAccepted2
-  actionAccepted3
-  tickspercustomer
-]
-
-breed[customers customer]
-breed[workers worker]
-
-customers-own[
-  location
-  action
-  waitedTime
-  actionActive
-  actionTime
-  ticks-on-patch
-  timeInQueue
-  return
-]
-
-workers-own [
-  location ;; queue
-]
-
-;;add check for invalid setups , improves behaviourspace speed
-to setup
-  clear-all
-  reset-ticks
-  set tickspercustomer 3
-
-  set queueLimit 14
-  ;;create grid
-  ask patches [
-    set pcolor 8
-  ]
-  ;;create checker pattern
-  ask patches with [(pxcor + pycor) mod 2 = 0]
-  [
-    set pcolor  106
-  ]
-
-  ;;create yellow line
-  ask patches with [pycor = 7]
-  [
-    set pcolor 46
-  ]
-
-  ask patch -6 -8 [set pcolor 56]
-  ask patch 6 -8 [set pcolor 15]
-  ;;initialize workers
-  create-workers 4
-
-  ask workers[
-    set ycor 8
-    set shape "person"
-    set color 85
-  ]
-  ask worker 0[
-    set location 0
-    set xcor -3
-    set plabel actionAcceptedList0
-  ]
-  ask worker 1[
-    set location 1
-    set xcor -1
-    set plabel actionAccepted1
-  ]
-  ask worker 2[
-    set location 2
-    set xcor 1
-    set plabel actionAccepted2
-  ]
-  ask worker 3[
-    set location 3
-    set xcor 3
-    set plabel actionAccepted3
-  ]
-
-  ;;location -1 = entrance
-  ;;location 0 = queue 0
-  ;;location 1 = queue 1
-  ;;location 2 = queue 2
-  ;;location 3 = queue 3
-  ;;location 4 = done, exit
-
-  ;;action 1 = 2-5
-  ;;action 2 = 3-10
-  ;;action 3 = 5-20 + return to spawn
-
-  ;  create-customers 500
-  ;
-  ;  ask customers[
-  ;    set shape "person"
-  ;    set xcor -6
-  ;    set ycor -8
-  ;    set location -1
-  ;    set action 0
-  ;    set actionActive 0
-  ;    set return false
-  ;    set ticks-on-patch 0
-  ;    set timeInQueue 0
-  ;  ]
-  ;; assign actions to percentages of the customers
-
-  ;;assign-actions
-  convert_actions
-end
-
-to go
-  ;;geef ze een random action volgens de percentages
-  if  remainder ticks 3 = 0 [
-    create-customers 1 [
-      set shape "person"
-      set xcor -6
-      set ycor -8
-      set location -1
-      set actionActive 0
-      set return false
-      set ticks-on-patch 0
-      set timeInQueue 0
-      assign-random-action
-
-    ]
-
-  ]
-
-  calculate_waiting
-  if ticks >= 500 [stop]
-  ask customers
-  [
-    if location != 4[
-      ifelse location = -1
-      [go-to-line]
-      [move-in-line]
-    ]
-  ]
-  calculate_average
-  if customersDone = 188 [
-    ask customers with [location != 4][
-      show xcor
-    ]
-  ]
-  tick
-end
-
-to assign-random-action
-  let randomnumber random 100
-  if randomnumber >= 80 []
-  if randomnumber >= 15 and randomnumber < 80 [set action 2]
-  if randomnumber >= 0 and randomnumber < 15[set action 3]
-end
-to assign-actions
-  ;;let current-action 1
-  let total-customers count customers
-  ask n-of (0.8 * total-customers) customers with [action = 0] [set action 1 set actionTime ((random 3) + 2)] ;;percentage with action 1
-  ask n-of (0.15 * total-customers) customers with [action = 0] [set action 2 set actionTime ((random 11) + 3)];;percentage with action 2
-  ask n-of (0.05 * total-customers) customers with [action = 0] [set action 3 set return true set actionTime ((random 21) + 5)];;percentage with action 3
-end
-
-;;customer functions
-to go-to-line
-  ;;go to the line, count amount of people available to check the best one
-  ;;check which lines are accepted
-  ;;get people waiting in each queue
-  calculate_waiting
-  let best [-1 9999]
-
-  repeat 4 [
-    foreach actionAccepted0 [x ->
-      if x = action [
-        ;;add check for best. add for all still not done
-        if last best >= customersWaiting0 [
-          if customersWaiting0 < queueLimit[
-            set best replace-item 0 best 0
-            set best replace-item 1 best customersWaiting0
-          ]
-        ]
-      ]
-    ]
-    foreach actionAccepted1 [x ->
-      if x = action [
-        if last best >= customersWaiting1 [
-          if customersWaiting1 < queueLimit[
-            set best replace-item 0 best 1
-            set best replace-item 1 best customersWaiting1
-          ]
-        ]
-      ]
-    ]
-    foreach actionAccepted2 [x ->
-      if x = action [
-        if last best >= customersWaiting2 [
-          if customersWaiting2 < queueLimit[
-            set best replace-item 0 best 2
-            set best replace-item 1 best customersWaiting2
-          ]
-        ]
-      ]
-    ]
-    foreach actionAccepted3 [x ->
-      if x = action [
-        if last best >= customersWaiting3 [
-          if customersWaiting3 < queueLimit[
-            set best replace-item 0 best 3
-            set best replace-item 1 best customersWaiting3
-          ]
-        ]
-      ]
-    ]
-  ]
-  ;;A + B = 6 (A = customers waiting, B= coordinates)
-  ;;so to get y cords -> B = 6 - A
-
-  if first best = 0[
-    set xcor -3
-    set location first best
-    set ycor 6 - customersWaiting0
-
-  ]
-  if first best = 1[
-    set xcor -1
-    set location first best
-    set ycor 6 - customersWaiting1
-  ]
-  if first best = 2[
-    set xcor 1
-    set location first best
-    set ycor 6 - customersWaiting2
-  ]
-  if first best = 3[
-    set xcor 3
-    set location first best
-    set ycor 6 - customersWaiting3
-  ]
-end
-
-to move-in-line
-  set timeInQueue timeInQueue + 1
-  ;;check if you are at the counter
-  ifelse ycor + 2 = 8 [
-    ;;start work
-    set actionActive true
-    ;;wait add time
-    ifelse ticks-on-patch >= actionTime
-    [
-      ifelse return = true[
-        ;        set location -1
-        ;        set xcor -6
-        ;        set ycor -8
-        ;        set return false
-        set location 4
-        set xcor 6
-        set ycor -8
-      ][
-        set location 4
-        set xcor 6
-        set ycor -8
-      ]
-
-    ]
-    [
-      set ticks-on-patch ticks-on-patch + 1
-    ]
-
-  ][
-    let main-customer-x xcor
-    let main-customer-y ycor
-
-    ifelse any? customers with [xcor = main-customer-x and main-customer-y + 1 = ycor] [][
-      ask customers with [xcor = main-customer-x and ycor = main-customer-y][
-        set ycor ycor + 1
-      ]
-  ]]
-
-end
-
-
-;;global functions
-to calculate_waiting
-  set customersWaiting0 count customers with [location = 0]
-  set customersWaiting1 count customers with [location = 1]
-  set customersWaiting2 count customers with [location = 2]
-  set customersWaiting3 count customers with [location = 3]
-  set customersDone count customers with [location = 4]
-end
-
-to calculate_average
-  let customersaction1 count customers with [location = 4 and action = 1]
-  let customersaction2 count customers with [location = 4 and action = 2]
-  let customersaction3 count customers with [location = 4 and action = 3]
-
-  ifelse (customersaction1) = 0 [][ set averageWaitingAction1 (sum [timeInQueue] of customers with [location = 4 and action = 1])/(count customers with [location = 4 and action = 1])]
-  ifelse (customersaction2) = 0 [][ set averageWaitingAction2 (sum [timeInQueue] of customers with [location = 4 and action = 2])/(count customers with [location = 4 and action = 2])]
-  ifelse (customersaction3) = 0 [][ set averageWaitingAction3 (sum [timeInQueue] of customers with [location = 4 and action = 3])/(count customers with [location = 4 and action = 3])]
-
-end
-
-to convert_actions
-  let actionsstringlist0 explode actionAcceptedList0
-  set actionAccepted0 read-from-list actionsstringlist0
-  let actionsstringlist1 explode actionAcceptedList1
-  set actionAccepted1 read-from-list actionsstringlist1
-  let actionsstringlist2 explode actionAcceptedList2
-  set actionAccepted2 read-from-list actionsstringlist2
-  let actionsstringlist3 explode actionAcceptedList3
-  set actionAccepted3 read-from-list actionsstringlist3
-  show actionAccepted3
-end
-
-to-report explode [s]
-  report map [n -> item n s] n-values (length s) [n -> n]
-end
-to-report read-from-list [ x ]
-  report ifelse-value is-list? x
-    [ map read-from-list x ]
-  [ read-from-string x ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 244
@@ -525,7 +190,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-1
+123
 1
 0
 String
@@ -536,7 +201,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-12
+123
 1
 0
 String
@@ -547,7 +212,7 @@ INPUTBOX
 220
 256
 actionAcceptedList2
-23
+123
 1
 0
 String
@@ -558,7 +223,7 @@ INPUTBOX
 230
 339
 actionAcceptedList3
-3
+123
 1
 0
 String
@@ -779,6 +444,43 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person business
+false
+0
+Rectangle -1 true false 120 90 180 180
+Polygon -13345367 true false 135 90 150 105 135 180 150 195 165 180 150 105 165 90
+Polygon -7500403 true true 120 90 105 90 60 195 90 210 116 154 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 183 153 210 210 240 195 195 90 180 90 150 165
+Circle -7500403 true true 110 5 80
+Rectangle -7500403 true true 127 76 172 91
+Line -16777216 false 172 90 161 94
+Line -16777216 false 128 90 139 94
+Polygon -13345367 true false 195 225 195 300 270 270 270 195
+Rectangle -13791810 true false 180 225 195 300
+Polygon -14835848 true false 180 226 195 226 270 196 255 196
+Polygon -13345367 true false 209 202 209 216 244 202 243 188
+Line -16777216 false 180 90 150 165
+Line -16777216 false 120 90 150 165
+
+person service
+false
+0
+Polygon -7500403 true true 180 195 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285
+Polygon -1 true false 120 90 105 90 60 195 90 210 120 150 120 195 180 195 180 150 210 210 240 195 195 90 180 90 165 105 150 165 135 105 120 90
+Polygon -1 true false 123 90 149 141 177 90
+Rectangle -7500403 true true 123 76 176 92
+Circle -7500403 true true 110 5 80
+Line -13345367 false 121 90 194 90
+Line -16777216 false 148 143 150 196
+Rectangle -16777216 true false 116 186 182 198
+Circle -1 true false 152 143 9
+Circle -1 true false 152 166 9
+Rectangle -16777216 true false 179 164 183 186
+Polygon -2674135 true false 180 90 195 90 183 160 180 195 150 195 150 135 180 90
+Polygon -2674135 true false 120 90 105 90 114 161 120 195 150 195 150 135 120 90
+Polygon -2674135 true false 155 91 128 77 128 101
+Rectangle -16777216 true false 118 129 141 140
+Polygon -2674135 true false 145 91 172 77 172 101
 
 plant
 false
