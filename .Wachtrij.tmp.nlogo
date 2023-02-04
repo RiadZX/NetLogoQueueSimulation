@@ -100,6 +100,7 @@ to setup
 end
 
 to go
+
   ;;geef ze een random action volgens de percentages
   if ticks > 600 [stop]
   if  remainder ticks tickspercustomer = 0 and ticks < 500[
@@ -316,6 +317,8 @@ to check_if_setup_valid
   show count1
   show count2
   show count3
+
+  if count1 < 2 or count2 < 2 or count3 < 2[stop]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -508,7 +511,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-12
+NIL
 1
 0
 String
@@ -519,7 +522,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-123
+NIL
 1
 0
 String
@@ -530,7 +533,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-123
+NIL
 1
 0
 String
@@ -541,7 +544,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-123
+NIL
 1
 0
 String

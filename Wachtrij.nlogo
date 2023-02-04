@@ -14,6 +14,9 @@ globals[
   actionAccepted2
   actionAccepted3
   tickspercustomer
+  count1
+  count2
+  count3
 ]
 
 breed[customers customer]
@@ -100,6 +103,7 @@ to setup
 end
 
 to go
+    if count1 < 2 or count2 < 2 or count3 < 2[stop]
   ;;geef ze een random action volgens de percentages
   if ticks > 600 [stop]
   if  remainder ticks tickspercustomer = 0 and ticks < 500[
@@ -289,10 +293,6 @@ to-report read-from-list [ x ]
 end
 
 to check_if_setup_valid
-  let count1 0
-  let count2 0
-  let count3 0
-
   foreach actionAccepted0 [x ->
     if x = 1 [set count1 count1 + 1]
     if x = 2 [set count2 count2 + 1]
@@ -316,6 +316,8 @@ to check_if_setup_valid
   show count1
   show count2
   show count3
+
+  if count1 < 2 or count2 < 2 or count3 < 2[stop]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -519,7 +521,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-123
+23
 1
 0
 String
@@ -530,7 +532,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-123
+21
 1
 0
 String
@@ -541,7 +543,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-123
+332
 1
 0
 String
