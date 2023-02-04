@@ -917,36 +917,74 @@ NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="experiment" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="experiment" repetitions="5" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="1200"/>
-    <metric>averageWaitingAction1</metric>
-    <metric>averageWaitingAction2</metric>
-    <metric>averageWaitingAction3</metric>
-    <enumeratedValueSet variable="actionAccepted3">
-      <value value="1"/>
-      <value value="2"/>
-      <value value="3"/>
+    <metric>count customersDone</metric>
+    <metric>count averageWaitingAction1</metric>
+    <metric>count averageWaitingAction2</metric>
+    <metric>count averageWaitingAction3</metric>
+    <enumeratedValueSet variable="actionAcceptedList0">
+      <value value="&quot;1&quot;"/>
+      <value value="&quot;2&quot;"/>
+      <value value="&quot;3&quot;"/>
+      <value value="&quot;12&quot;"/>
+      <value value="&quot;123&quot;"/>
+      <value value="&quot;23&quot;"/>
+      <value value="&quot;13&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="actionAccepted0">
-      <value value="1"/>
-      <value value="2"/>
-      <value value="3"/>
+    <enumeratedValueSet variable="actionAcceptedList1">
+      <value value="&quot;1&quot;"/>
+      <value value="&quot;2&quot;"/>
+      <value value="&quot;3&quot;"/>
+      <value value="&quot;12&quot;"/>
+      <value value="&quot;123&quot;"/>
+      <value value="&quot;23&quot;"/>
+      <value value="&quot;13&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="actionAccepted1">
-      <value value="1"/>
-      <value value="2"/>
-      <value value="3"/>
+    <enumeratedValueSet variable="actionAcceptedList2">
+      <value value="&quot;1&quot;"/>
+      <value value="&quot;2&quot;"/>
+      <value value="&quot;3&quot;"/>
+      <value value="&quot;12&quot;"/>
+      <value value="&quot;123&quot;"/>
+      <value value="&quot;23&quot;"/>
+      <value value="&quot;13&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="actionAccepted2">
-      <value value="1"/>
-      <value value="2"/>
-      <value value="3"/>
+    <enumeratedValueSet variable="actionAcceptedList3">
+      <value value="&quot;1&quot;"/>
+      <value value="&quot;2&quot;"/>
+      <value value="&quot;3&quot;"/>
+      <value value="&quot;12&quot;"/>
+      <value value="&quot;123&quot;"/>
+      <value value="&quot;23&quot;"/>
+      <value value="&quot;13&quot;"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
 @#$#@#$#@
+VIEW
+96
+160
+575
+786
+0
+0
+0
+1
+1
+1
+1
+1
+0
+1
+1
+1
+-6
+6
+-8
+8
+
 @#$#@#$#@
 default
 0.0
