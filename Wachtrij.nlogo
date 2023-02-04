@@ -292,6 +292,7 @@ to check_if_setup_valid
   let count1 0
   let count2 0
   let count3 0
+
   foreach actionAccepted0 [x ->
     if x = 1 [set count1 count1 + 1]
     if x = 2 [set count2 count2 + 1]
@@ -507,7 +508,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-123
+12
 1
 0
 String

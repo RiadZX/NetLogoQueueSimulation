@@ -94,7 +94,7 @@ to setup
 
   ;;action 1 = 2-5
   ;;action 2 = 3-10
-  ;;action 3 = 5-20 + return to spawn
+  ;;action 3 = 5-20
   convert_actions
   check_if_setup_valid
 end
@@ -109,7 +109,6 @@ to go
       set ycor -8
       set location -1
       set actionActive 0
-
       set ticks-on-patch 0
       set timeInQueue 0
       assign-random-action
@@ -133,7 +132,7 @@ end
 
 to assign-random-action
   let randomnumber random 100
-  if randomnumber > 95[set action 3 set return true set actionTime ((random 21) + 5)]
+  if randomnumber > 95[set action 3  set actionTime ((random 21) + 5)]
   if randomnumber <= 95 and randomnumber > 80 [set action 2 set actionTime ((random 11) + 3)]
   if randomnumber <= 80 [set action 1 set actionTime ((random 3) + 2)]
 
@@ -224,21 +223,12 @@ to move-in-line
     ;;wait add time
     ifelse ticks-on-patch >= actionTime
     [
-      ifelse return = true[
-        ;        set location -1
-        ;        set xcor -6
-        ;        set ycor -8
-        ;        set return false
+
         set location 4
         set xcor 6
         set ycor -8
         set hidden? true
-      ][
-        set location 4
-        set xcor 6
-        set ycor -8
-        set hidden? true
-      ]
+
 
     ]
     [
@@ -302,6 +292,7 @@ to check_if_setup_valid
   let count1 0
   let count2 0
   let count3 0
+
   foreach actionAccepted0 [x ->
     if x = 1 [set count1 count1 + 1]
     if x = 2 [set count2 count2 + 1]
@@ -517,7 +508,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-123
+12
 1
 0
 String
