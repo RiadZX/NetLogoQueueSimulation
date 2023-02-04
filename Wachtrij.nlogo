@@ -36,31 +36,27 @@ workers-own [
   location ;; queue
 ]
 
-;;add check for invalid setups , improves behaviourspace speed
 to setup
   clear-all
   reset-ticks
   set tickspercustomer 3
   set queueLimit 14
-  ;;create grid
+
   ask patches [
     set pcolor 33
   ]
-  ;  ;;create checker pattern
   ask patches with [(pxcor + pycor) mod 2 = 0]
   [
     set pcolor  35
   ]
 
-  ;;create yellow line
+
   ask patches with [pycor = 7]
   [
     set pcolor 3
   ]
 
-  ;  ask patch -6 -8 [set pcolor 56]
-  ; ask patch 6 -8 [set pcolor 15]
-  ;;initialize workers
+
   create-workers 4
 
   ask workers[
@@ -103,9 +99,8 @@ to setup
 end
 
 to go
-    if count1 < 2 or count2 < 2 or count3 < 2[stop]
-  ;;geef ze een random action volgens de percentages
-  if ticks > 600 [stop]
+  if count1 < 2 or count2 < 2 or count3 < 2[stop]
+  if ticks > 800 [stop]
   if  remainder ticks tickspercustomer = 0 and ticks < 500[
     create-customers 1 [
       set shape "person business"
@@ -192,9 +187,6 @@ to go-to-line
       ]
     ]
   ]
-  ;;A + B = 6 (A = customers waiting, B= coordinates)
-  ;;so to get y cords -> B = 6 - A
-
   if first best = 0[
     set xcor -3
     set location first best
@@ -220,20 +212,15 @@ end
 
 to move-in-line
   set timeInQueue timeInQueue + 1
-  ;;check if you are at the counter
   ifelse ycor + 2 = 8 [
-    ;;start work
     set actionActive true
-    ;;wait add time
+
     ifelse ticks-on-patch >= actionTime
     [
-
-        set location 4
-        set xcor 6
-        set ycor -8
-        set hidden? true
-
-
+      set location 4
+      set xcor 6
+      set ycor -8
+      set hidden? true
     ]
     [
       set ticks-on-patch ticks-on-patch + 1
@@ -313,11 +300,9 @@ to check_if_setup_valid
     if x = 2 [set count2 count2 + 1]
     if x = 3 [set count3 count3 + 1]
   ]
-  show count1
-  show count2
-  show count3
-
-  if count1 < 2 or count2 < 2 or count3 < 2[stop]
+  ;  show count1
+  ;  show count2
+  ;  show count3
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -510,7 +495,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-12
+123
 1
 0
 String
@@ -521,7 +506,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-23
+123
 1
 0
 String
@@ -532,7 +517,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-21
+123
 1
 0
 String
@@ -543,7 +528,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-332
+123
 1
 0
 String

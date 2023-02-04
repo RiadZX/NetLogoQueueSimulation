@@ -14,6 +14,9 @@ globals[
   actionAccepted2
   actionAccepted3
   tickspercustomer
+  count1
+  count2
+  count3
 ]
 
 breed[customers customer]
@@ -33,31 +36,27 @@ workers-own [
   location ;; queue
 ]
 
-;;add check for invalid setups , improves behaviourspace speed
 to setup
   clear-all
   reset-ticks
   set tickspercustomer 3
   set queueLimit 14
-  ;;create grid
+
   ask patches [
     set pcolor 33
   ]
-  ;  ;;create checker pattern
   ask patches with [(pxcor + pycor) mod 2 = 0]
   [
     set pcolor  35
   ]
 
-  ;;create yellow line
+
   ask patches with [pycor = 7]
   [
     set pcolor 3
   ]
 
-  ;  ask patch -6 -8 [set pcolor 56]
-  ; ask patch 6 -8 [set pcolor 15]
-  ;;initialize workers
+
   create-workers 4
 
   ask workers[
@@ -100,8 +99,8 @@ to setup
 end
 
 to go
+  if count1 < 2 or count2 < 2 or count3 < 2[stop]
 
-  ;;geef ze een random action volgens de percentages
   if ticks > 600 [stop]
   if  remainder ticks tickspercustomer = 0 and ticks < 500[
     create-customers 1 [
@@ -225,10 +224,10 @@ to move-in-line
     ifelse ticks-on-patch >= actionTime
     [
 
-        set location 4
-        set xcor 6
-        set ycor -8
-        set hidden? true
+      set location 4
+      set xcor 6
+      set ycor -8
+      set hidden? true
 
 
     ]
@@ -290,10 +289,6 @@ to-report read-from-list [ x ]
 end
 
 to check_if_setup_valid
-  let count1 0
-  let count2 0
-  let count3 0
-
   foreach actionAccepted0 [x ->
     if x = 1 [set count1 count1 + 1]
     if x = 2 [set count2 count2 + 1]
@@ -314,11 +309,9 @@ to check_if_setup_valid
     if x = 2 [set count2 count2 + 1]
     if x = 3 [set count3 count3 + 1]
   ]
-  show count1
-  show count2
-  show count3
-
-  if count1 < 2 or count2 < 2 or count3 < 2[stop]
+  ;  show count1
+  ;  show count2
+  ;  show count3
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -511,7 +504,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-NIL
+123
 1
 0
 String
@@ -522,7 +515,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-NIL
+123
 1
 0
 String
@@ -533,7 +526,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-NIL
+123
 1
 0
 String
@@ -544,7 +537,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-NIL
+123
 1
 0
 String
