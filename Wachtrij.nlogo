@@ -1,5 +1,4 @@
 
-
 globals[
   customersWaiting0
   customersWaiting1
@@ -28,7 +27,6 @@ customers-own[
   actionTime
   ticks-on-patch
   timeInQueue
-  return
 ]
 
 workers-own [
@@ -96,7 +94,7 @@ to setup
 
   ;;action 1 = 2-5
   ;;action 2 = 3-10
-  ;;action 3 = 5-20 + return to spawn
+  ;;action 3 = 5-20
   convert_actions
   check_if_setup_valid
 end
@@ -111,7 +109,6 @@ to go
       set ycor -8
       set location -1
       set actionActive 0
-      set return false
       set ticks-on-patch 0
       set timeInQueue 0
       assign-random-action
@@ -135,30 +132,23 @@ end
 
 to assign-random-action
   let randomnumber random 100
-  if randomnumber >= 80 [set action 1 set actionTime ((random 3) + 2)]
-  if randomnumber >= 15 and randomnumber < 80 [set action 2 set actionTime ((random 11) + 3)]
-  if randomnumber >= 0 and randomnumber < 15[set action 3 set return true set actionTime ((random 21) + 5)]
+  if randomnumber > 95[set action 3  set actionTime ((random 21) + 5)]
+  if randomnumber <= 95 and randomnumber > 80 [set action 2 set actionTime ((random 11) + 3)]
+  if randomnumber <= 80 [set action 1 set actionTime ((random 3) + 2)]
+
 end
-;to assign-actions
-;  ;;let current-action 1
-;  let total-customers count customers
-;  ask n-of (0.8 * total-customers) customers with [action = 0] [set action 1 set actionTime ((random 3) + 2)] ;;percentage with action 1
-;  ask n-of (0.15 * total-customers) customers with [action = 0] [set action 2 set actionTime ((random 11) + 3)];;percentage with action 2
-;  ask n-of (0.05 * total-customers) customers with [action = 0] [set action 3 set return true set actionTime ((random 21) + 5)];;percentage with action 3
-;end
+
 
 ;;customer functions
 to go-to-line
-  ;;go to the line, count amount of people available to check the best one
-  ;;check which lines are accepted
-  ;;get people waiting in each queue
+
   calculate_waiting
   let best [-1 9999]
 
   repeat 4 [
     foreach actionAccepted0 [x ->
       if x = action [
-        ;;add check for best. add for all still not done
+
         if last best >= customersWaiting0 [
           if customersWaiting0 < queueLimit[
             set best replace-item 0 best 0
@@ -233,21 +223,12 @@ to move-in-line
     ;;wait add time
     ifelse ticks-on-patch >= actionTime
     [
-      ifelse return = true[
-        ;        set location -1
-        ;        set xcor -6
-        ;        set ycor -8
-        ;        set return false
+
         set location 4
         set xcor 6
         set ycor -8
         set hidden? true
-      ][
-        set location 4
-        set xcor 6
-        set ycor -8
-        set hidden? true
-      ]
+
 
     ]
     [
