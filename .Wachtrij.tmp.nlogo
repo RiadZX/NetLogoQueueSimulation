@@ -50,7 +50,10 @@ to setup
   reset-ticks
   set tickspercustomer 3
   set queueLimit 14
-
+  set worker0Break false
+  set worker1Break false
+  set worker2Break false
+  set worker3Break false
   ask patches [
     set pcolor 33
   ]
@@ -190,6 +193,7 @@ ask workers [set onBreak false set shape "person service"]
       set worker3Break true
     ]
   ]
+
 end
 
 ;;customer functions
@@ -225,7 +229,7 @@ to go-to-line
     foreach actionAccepted2 [x ->
       if x = action [
         if last best >= customersWaiting2 [
-          if customersWaiting2 < queueLimit  and worker2Break = false[
+          if customersWaiting2 < queueLimit and worker2Break = false[
             set best replace-item 0 best 2
             set best replace-item 1 best customersWaiting2
           ]
@@ -235,7 +239,7 @@ to go-to-line
     foreach actionAccepted3 [x ->
       if x = action [
         if last best >= customersWaiting3 [
-          if customersWaiting3 < queueLimit  and worker3Break = false[
+          if customersWaiting3 < queueLimit and worker3Break = false[
             set best replace-item 0 best 3
             set best replace-item 1 best customersWaiting3
           ]
