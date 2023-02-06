@@ -160,10 +160,10 @@ to take_break
   if ticks =  240 + breakLength[
 
   ]
-  if ticks = 240 + breakLength * 2[
+  if ticks = 240 + breakLength *2[
 
   ]
-  if ticks = 240 + breakLength * 3[
+  if ticks = 240 + breakLength*3[
 
   ]
 end
