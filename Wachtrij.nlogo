@@ -17,6 +17,10 @@ globals[
   count2
   count3
 breakLength
+  worker0Break
+  worker1Break
+  worker2Break
+  worker3Break
 ]
 
 breed[customers customer]
@@ -46,7 +50,10 @@ to setup
   reset-ticks
   set tickspercustomer 3
   set queueLimit 14
-
+  set worker0Break false
+  set worker1Break false
+  set worker2Break false
+  set worker3Break false
   ask patches [
     set pcolor 33
   ]
@@ -156,27 +163,34 @@ to take_break
     ask worker 0 [
     set onBreak true
     set shape "x"
+     set worker0Break true
     ]
   ]
   if ticks =  240 + breakLength[
+    set worker0Break false
     ask workers [set onBreak false set shape "person service"]
     ask worker 1 [
+      set worker1Break true
     set onBreak true
       set shape "x"
     ]
   ]
   if ticks = 240 + breakLength * 2[
 ask workers [set onBreak false set shape "person service"]
+    set worker1Break false
     ask worker 2 [
     set onBreak true
       set shape "x"
+      set worker2Break true
     ]
   ]
   if ticks = 240 + breakLength * 3[
 ask workers [set onBreak false set shape "person service"]
+    set worker2Break false
     ask worker 3 [
     set onBreak true
       set shape "x"
+      set worker3Break true
     ]
   ]
 end
@@ -194,7 +208,7 @@ to go-to-line
       if x = action [
 
         if last best >= customersWaiting0 [
-          if customersWaiting0 < queueLimit[
+          if customersWaiting0 < queueLimit and worker0Break = false[
             set best replace-item 0 best 0
             set best replace-item 1 best customersWaiting0
           ]
@@ -204,7 +218,7 @@ to go-to-line
     foreach actionAccepted1 [x ->
       if x = action [
         if last best >= customersWaiting1 [
-          if customersWaiting1 < queueLimit[
+          if customersWaiting1 < queueLimit  and worker1Break = false[
             set best replace-item 0 best 1
             set best replace-item 1 best customersWaiting1
           ]
@@ -214,7 +228,7 @@ to go-to-line
     foreach actionAccepted2 [x ->
       if x = action [
         if last best >= customersWaiting2 [
-          if customersWaiting2 < queueLimit[
+          if customersWaiting2 < queueLimit  and worker2Break = false[
             set best replace-item 0 best 2
             set best replace-item 1 best customersWaiting2
           ]
@@ -224,7 +238,7 @@ to go-to-line
     foreach actionAccepted3 [x ->
       if x = action [
         if last best >= customersWaiting3 [
-          if customersWaiting3 < queueLimit[
+          if customersWaiting3 < queueLimit  and worker3Break = false[
             set best replace-item 0 best 3
             set best replace-item 1 best customersWaiting3
           ]
@@ -260,8 +274,7 @@ to move-in-line
   ;; check if in break
   ;; if in break -> wait
 
-
-  ifelse ycor + 2 = 8 [
+  ifelse ycor + 2 = 8[
     set actionActive true
 
     ifelse ticks-on-patch >= actionTime
