@@ -193,7 +193,10 @@ ask workers [set onBreak false set shape "person service"]
       set worker3Break true
     ]
   ]
-
+  if ticks = 240 + breakLength * 4[
+ask workers [set onBreak false set shape "person service"]
+    set worker3Break false
+  ]
 end
 
 ;;customer functions
@@ -272,10 +275,15 @@ end
 
 to move-in-line
   set timeInQueue timeInQueue + 1
-  ;; check if in break
-  ;; if in break -> wait
+  ;; check if worker in your queue is on queue
+  let pauseBreak false
+  if xcor = -3 and worker0Break = true [set pauseBreak true]
+  if xcor = -1 and worker1Break = true [set pauseBreak true]
+  if xcor = 1 and worker2Break = true [set pauseBreak true]
+  if xcor = 3 and worker3Break = true [set pauseBreak true]
 
-  ifelse ycor + 2 = 8[
+  ifelse ycor + 2 = 8 pauseBreak = false[
+
     set actionActive true
 
     ifelse ticks-on-patch >= actionTime
@@ -289,7 +297,9 @@ to move-in-line
       set ticks-on-patch ticks-on-patch + 1
     ]
 
-  ][
+  ]
+
+  [
     let main-customer-x xcor
     let main-customer-y ycor
 

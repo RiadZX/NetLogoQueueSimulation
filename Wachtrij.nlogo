@@ -275,10 +275,15 @@ end
 
 to move-in-line
   set timeInQueue timeInQueue + 1
-  ;; check if in break
-  ;; if in break -> wait
+  ;; check if worker in your queue is on queue
+  let pauseBreak false
+  if xcor = -3 and worker0Break = true [set pauseBreak true]
+  if xcor = -1 and worker1Break = true [set pauseBreak true]
+  if xcor = 1 and worker2Break = true [set pauseBreak true]
+  if xcor = 3 and worker3Break = true [set pauseBreak true]
 
-  ifelse ycor + 2 = 8[
+  ifelse ycor + 2 = 8 [
+    if pauseBreak = false [
     set actionActive true
 
     ifelse ticks-on-patch >= actionTime
@@ -292,7 +297,10 @@ to move-in-line
       set ticks-on-patch ticks-on-patch + 1
     ]
 
-  ][
+  ]
+  ]
+
+  [
     let main-customer-x xcor
     let main-customer-y ycor
 
@@ -559,7 +567,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-123
+1
 1
 0
 String
