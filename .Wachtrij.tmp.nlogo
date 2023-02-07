@@ -16,11 +16,12 @@ globals[
   count1
   count2
   count3
-breakLength
+  breakLength
   worker0Break
   worker1Break
   worker2Break
   worker3Break
+  totalwaitingtime
 ]
 
 breed[customers customer]
@@ -34,28 +35,26 @@ customers-own[
   actionTime
   ticks-on-patch
   timeInQueue
-
-
 ]
 
 workers-own [
   location ;; queue
   onBreak
-
-
 ]
 
 to setup
   clear-all
   reset-ticks
-  set tickspercustomer 3
+  set tickspercustomer 1
   set queueLimit 14
   set worker0Break false
   set worker1Break false
   set worker2Break false
   set worker3Break false
+
   ask patches [
     set pcolor 33
+
   ]
   ask patches with [(pxcor + pycor) mod 2 = 0]
   [
@@ -67,13 +66,13 @@ to setup
     set pcolor 3
   ]
 
-
   create-workers 4
 
   ask workers[
     set ycor 8
     set shape "person service"
-    set breakLength 15
+    set breakLength 30
+
   ]
   ask worker 0[
     set location 0
@@ -111,9 +110,20 @@ to setup
 end
 
 to go
+
   if count1 < 2 or count2 < 2 or count3 < 2[stop]
-  if ticks > 800 [stop]
-  if  remainder ticks tickspercustomer = 0 and ticks < 500[
+  ;;variable
+  if ticks >= 60 * 1[set tickspercustomer 1]
+  if ticks >= 60 * 2 [set tickspercustomer 3]
+  if ticks >= 60 * 3[set tickspercustomer 4]
+  if ticks >= 60 * 4[set tickspercustomer 5]
+  if ticks >= 60 * 5 [set tickspercustomer 5]
+  if ticks >= 60 * 6 [set tickspercustomer 3]
+  if ticks >= 60 * 7 [set tickspercustomer 1]
+
+  show tickspercustomer
+  if customersdone = 260 [stop]
+  if  remainder ticks tickspercustomer = 0 and ticks <= 480[
     create-customers 1 [
       set shape "person business"
       set xcor -6
@@ -123,9 +133,7 @@ to go
       set ticks-on-patch 0
       set timeInQueue 0
       assign-random-action
-
     ]
-
   ]
 
   calculate_waiting
@@ -138,7 +146,7 @@ to go
     ]
   ]
   ask workers [
-   take_break
+    take_break
   ]
   calculate_average
   tick
@@ -149,7 +157,6 @@ to assign-random-action
   if randomnumber > 95[set action 3  set actionTime ((random 21) + 5)]
   if randomnumber <= 95 and randomnumber > 80 [set action 2 set actionTime ((random 11) + 3)]
   if randomnumber <= 80 [set action 1 set actionTime ((random 3) + 2)]
-
 end
 
 to take_break
@@ -161,9 +168,10 @@ to take_break
 
   if ticks = 240[
     ask worker 0 [
-    set onBreak true
-    set shape "x"
-     set worker0Break true
+      set onBreak true
+      set shape "coffee"
+      set worker0Break true
+
     ]
   ]
   if ticks =  240 + breakLength[
@@ -171,30 +179,30 @@ to take_break
     ask workers [set onBreak false set shape "person service"]
     ask worker 1 [
       set worker1Break true
-    set onBreak true
-      set shape "x"
+      set onBreak true
+      set shape "coffee"
     ]
   ]
   if ticks = 240 + breakLength * 2[
-ask workers [set onBreak false set shape "person service"]
+    ask workers [set onBreak false set shape "person service"]
     set worker1Break false
     ask worker 2 [
-    set onBreak true
-      set shape "x"
+      set onBreak true
+      set shape "coffee"
       set worker2Break true
     ]
   ]
   if ticks = 240 + breakLength * 3[
-ask workers [set onBreak false set shape "person service"]
+    ask workers [set onBreak false set shape "person service"]
     set worker2Break false
     ask worker 3 [
-    set onBreak true
-      set shape "x"
+      set onBreak true
+      set shape "coffee"
       set worker3Break true
     ]
   ]
   if ticks = 240 + breakLength * 4[
-ask workers [set onBreak false set shape "person service"]
+    ask workers [set onBreak false set shape "person service"]
     set worker3Break false
   ]
 end
@@ -204,8 +212,8 @@ to go-to-line
 
   calculate_waiting
   let best [-1 9999]
-;;check if worker is on break
-;; if break -> dont go there
+  ;;check if worker is on break
+  ;; if break -> dont go there
 
   repeat 4 [
     foreach actionAccepted0 [x ->
@@ -282,21 +290,22 @@ to move-in-line
   if xcor = 1 and worker2Break = true [set pauseBreak true]
   if xcor = 3 and worker3Break = true [set pauseBreak true]
 
-  ifelse ycor + 2 = 8 pauseBreak = false[
+  ifelse ycor + 2 = 8 [
+    if pauseBreak = false [
+      set actionActive true
 
-    set actionActive true
+      ifelse ticks-on-patch >= actionTime
+      [
+        set location 4
+        set xcor 6
+        set ycor -8
+        set hidden? true
+      ]
+      [
+        set ticks-on-patch ticks-on-patch + 1
+      ]
 
-    ifelse ticks-on-patch >= actionTime
-    [
-      set location 4
-      set xcor 6
-      set ycor -8
-      set hidden? true
     ]
-    [
-      set ticks-on-patch ticks-on-patch + 1
-    ]
-
   ]
 
   [
@@ -319,6 +328,7 @@ to calculate_waiting
   set customersWaiting2 count customers with [location = 2]
   set customersWaiting3 count customers with [location = 3]
   set customersDone count customers with [location = 4]
+  set totalwaitingtime averageWaitingAction1 + averageWaitingAction2 + averageWaitingAction3 / count customers
 end
 
 to calculate_average
@@ -501,7 +511,7 @@ NIL
 PLOT
 745
 13
-1161
+1159
 170
 customers done
 time
@@ -545,7 +555,7 @@ MONITOR
 268
 averageWaitingAction2
 averageWaitingAction2
-17
+3
 1
 11
 
@@ -556,7 +566,7 @@ MONITOR
 319
 averageWaitingAction3
 averageWaitingAction3
-17
+3
 1
 11
 
@@ -603,6 +613,17 @@ actionAcceptedList3
 1
 0
 String
+
+MONITOR
+956
+274
+1162
+319
+Total Waiting Time Per customer
+totalwaitingtime
+3
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -707,6 +728,25 @@ false
 0
 Circle -7500403 true true 0 0 300
 Circle -16777216 true false 30 30 240
+
+coffee
+false
+0
+Rectangle -1 true false 75 75 180 240
+Rectangle -1 true false 180 105 225 120
+Rectangle -1 true false 210 120 225 210
+Rectangle -1 true false 180 195 225 210
+Rectangle -7500403 true true 75 120 180 135
+Rectangle -7500403 true true 75 180 180 195
+Rectangle -7500403 true true 165 135 150 195
+Rectangle -7500403 true true 150 120 165 195
+Rectangle -7500403 true true 120 150 135 165
+Rectangle -6459832 true false 90 75 165 90
+Rectangle -6459832 true false 105 60 150 75
+Rectangle -6459832 true false 120 45 135 60
+Rectangle -955883 true false 105 75 120 90
+Rectangle -6459832 true false 90 75 135 90
+Rectangle -7500403 true true 90 120 105 195
 
 cow
 false
@@ -911,6 +951,47 @@ Circle -7500403 true true 60 60 180
 Circle -16777216 true false 90 90 120
 Circle -7500403 true true 120 120 60
 
+tile log
+false
+0
+Rectangle -7500403 true true 0 0 300 300
+Line -16777216 false 0 30 45 15
+Line -16777216 false 45 15 120 30
+Line -16777216 false 120 30 180 45
+Line -16777216 false 180 45 225 45
+Line -16777216 false 225 45 165 60
+Line -16777216 false 165 60 120 75
+Line -16777216 false 120 75 30 60
+Line -16777216 false 30 60 0 60
+Line -16777216 false 300 30 270 45
+Line -16777216 false 270 45 255 60
+Line -16777216 false 255 60 300 60
+Polygon -16777216 false false 15 120 90 90 136 95 210 75 270 90 300 120 270 150 195 165 150 150 60 150 30 135
+Polygon -16777216 false false 63 134 166 135 230 142 270 120 210 105 116 120 88 122
+Polygon -16777216 false false 22 45 84 53 144 49 50 31
+Line -16777216 false 0 180 15 180
+Line -16777216 false 15 180 105 195
+Line -16777216 false 105 195 180 195
+Line -16777216 false 225 210 165 225
+Line -16777216 false 165 225 60 225
+Line -16777216 false 60 225 0 210
+Line -16777216 false 300 180 264 191
+Line -16777216 false 255 225 300 210
+Line -16777216 false 16 196 116 211
+Line -16777216 false 180 300 105 285
+Line -16777216 false 135 255 240 240
+Line -16777216 false 240 240 300 255
+Line -16777216 false 135 255 105 285
+Line -16777216 false 180 0 240 15
+Line -16777216 false 240 15 300 0
+Line -16777216 false 0 300 45 285
+Line -16777216 false 45 285 45 270
+Line -16777216 false 45 270 0 255
+Polygon -16777216 false false 150 270 225 300 300 285 228 264
+Line -16777216 false 223 209 255 225
+Line -16777216 false 179 196 227 183
+Line -16777216 false 228 183 266 192
+
 tree
 false
 0
@@ -988,13 +1069,14 @@ NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="experiment" repetitions="5" runMetricsEveryStep="false">
+  <experiment name="experiment" repetitions="10" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <metric>count customersDone</metric>
     <metric>count averageWaitingAction1</metric>
     <metric>count averageWaitingAction2</metric>
     <metric>count averageWaitingAction3</metric>
+    <metric>count totalwaitingtime</metric>
     <enumeratedValueSet variable="actionAcceptedList0">
       <value value="&quot;1&quot;"/>
       <value value="&quot;2&quot;"/>
