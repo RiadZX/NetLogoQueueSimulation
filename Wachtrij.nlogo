@@ -45,8 +45,10 @@ workers-own [
 to setup
   clear-all
   reset-ticks
+
   set tickspercustomer 1
   set queueLimit 14
+
   set worker0Break false
   set worker1Break false
   set worker2Break false
@@ -54,7 +56,6 @@ to setup
 
   ask patches [
     set pcolor 33
-
   ]
   ask patches with [(pxcor + pycor) mod 2 = 0]
   [
@@ -63,22 +64,21 @@ to setup
 
   ask patches with [pycor = 7]
   [
-    set pcolor 3
+    set pcolor (gray - 0.4)
   ]
 
   create-workers 4
 
-  ask workers[
+  ask workers [
     set ycor 8
     set shape "person service"
     set breakLength 30
 
   ]
-  ask worker 0[
+  ask worker 0 [
     set location 0
     set xcor -3
     set plabel actionAcceptedList0
-
   ]
   ask worker 1[
     set location 1
@@ -115,19 +115,19 @@ end
 
 to go
 
-  if count1 < 2 or count2 < 2 or count3 < 2[stop]
+  if count1 < 2 or count2 < 2 or count3 < 2 [stop]
+
   ;;variable
-  if ticks >= 60 * 1[set tickspercustomer 1]
+  if ticks >= 60 * 1 [set tickspercustomer 1]
   if ticks >= 60 * 2 [set tickspercustomer 3]
-  if ticks >= 60 * 3[set tickspercustomer 4]
-  if ticks >= 60 * 4[set tickspercustomer 5]
+  if ticks >= 60 * 3 [set tickspercustomer 4]
+  if ticks >= 60 * 4 [set tickspercustomer 5]
   if ticks >= 60 * 5 [set tickspercustomer 5]
   if ticks >= 60 * 6 [set tickspercustomer 3]
   if ticks >= 60 * 7 [set tickspercustomer 1]
 
-  show tickspercustomer
   if customersdone = 260 [stop]
-  if  remainder ticks tickspercustomer = 0 and ticks <= 480[
+  if remainder ticks tickspercustomer = 0 and ticks <= 480[
     create-customers 1 [
       set shape "person business"
       set xcor -6
@@ -158,7 +158,7 @@ end
 
 to assign-random-action
   let randomnumber random 100
-  if randomnumber > 95[set action 3  set actionTime ((random 21) + 5)]
+  if randomnumber > 95 [set action 3  set actionTime ((random 21) + 5)]
   if randomnumber <= 95 and randomnumber > 80 [set action 2 set actionTime ((random 11) + 3)]
   if randomnumber <= 80 [set action 1 set actionTime ((random 3) + 2)]
 end
@@ -178,7 +178,7 @@ to take_break
 
     ]
   ]
-  if ticks =  240 + breakLength[
+  if ticks =  240 + breakLength [
     set worker0Break false
     ask workers [set onBreak false set shape "person service"]
     ask worker 1 [
@@ -222,7 +222,6 @@ to go-to-line
   repeat 4 [
     foreach actionAccepted0 [x ->
       if x = action [
-
         if last best >= customersWaiting0 [
           if customersWaiting0 < queueLimit and worker0Break = false[
             set best replace-item 0 best 0
@@ -332,7 +331,7 @@ to calculate_waiting
   set customersWaiting2 count customers with [location = 2]
   set customersWaiting3 count customers with [location = 3]
   set customersDone count customers with [location = 4]
-  set totalwaitingtime averageWaitingAction1 + averageWaitingAction2 + averageWaitingAction3 / count customers
+  set totalwaitingtime (averageWaitingAction1 + averageWaitingAction2 + averageWaitingAction3) / 3
 end
 
 to calculate_average
@@ -580,7 +579,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-123
+13
 1
 0
 String
@@ -591,7 +590,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-123
+13
 1
 0
 String
@@ -602,7 +601,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-123
+23
 1
 0
 String
@@ -613,7 +612,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-123
+23
 1
 0
 String
@@ -621,9 +620,9 @@ String
 MONITOR
 956
 274
-1162
+1165
 319
-Total Waiting Time Per customer
+average Waiting Time Per customer
 totalwaitingtime
 3
 1
@@ -851,6 +850,19 @@ true
 0
 Line -7500403 true 150 0 150 150
 
+monitor
+false
+0
+Rectangle -16777216 true false 90 210 210 240
+Rectangle -16777216 true false 135 180 165 210
+Rectangle -16777216 true false 45 75 255 180
+Rectangle -2674135 true false 75 165 90 180
+Rectangle -2674135 true false 105 165 120 180
+Rectangle -13345367 true false 180 165 195 180
+Rectangle -13345367 true false 210 165 225 180
+Rectangle -16777216 true false 120 60 180 75
+Rectangle -16777216 true false 120 60 180 75
+
 pentagon
 false
 0
@@ -1076,11 +1088,10 @@ NetLogo 6.3.0
   <experiment name="experiment" repetitions="10" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
-    <metric>count customersDone</metric>
-    <metric>count averageWaitingAction1</metric>
-    <metric>count averageWaitingAction2</metric>
-    <metric>count averageWaitingAction3</metric>
-    <metric>count totalwaitingtime</metric>
+    <metric>averageWaitingAction1</metric>
+    <metric>averageWaitingAction2</metric>
+    <metric>averageWaitingAction3</metric>
+    <metric>totalwaitingtime</metric>
     <enumeratedValueSet variable="actionAcceptedList0">
       <value value="&quot;1&quot;"/>
       <value value="&quot;2&quot;"/>
