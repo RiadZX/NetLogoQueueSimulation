@@ -126,7 +126,7 @@ to go
   if ticks >= 60 * 6 [set tickspercustomer 4]
   if ticks >= 60 * 7 [set tickspercustomer 5]
 
-  if customersdone = 255 [stop]
+  if customersdone = 2 [stop]
   if remainder ticks tickspercustomer = 0 and ticks <= 480[
     create-customers 1 [
       set shape "person business"
