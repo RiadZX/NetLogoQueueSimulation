@@ -529,12 +529,16 @@ done
 0.0
 500.0
 0.0
-500.0
+180.0
 true
 true
 "" ""
 PENS
 "customers" 1.0 0 -16777216 true "" "plot customersDone"
+"average1" 1.0 0 -13791810 true "" "plot averageWaitingAction1"
+"average2" 1.0 0 -2674135 true "" "plot averageWaitingAction2"
+"average3" 1.0 0 -955883 true "" "plot averageWaitingAction3"
+"total-average" 1.0 0 -6459832 true "" "plot totalwaitingtime"
 
 MONITOR
 746
@@ -597,7 +601,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-12
+123
 1
 0
 String
@@ -608,7 +612,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-13
+123
 1
 0
 String
@@ -619,7 +623,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-1
+123
 1
 0
 String
