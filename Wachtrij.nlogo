@@ -294,7 +294,7 @@ to move-in-line
   if xcor = 3 and worker3Break = true [set pauseBreak true]
 
   ifelse ycor + 2 = 8 [
-    if pauseBreak = false [
+    ifelse pauseBreak = false [
       set actionActive true
 
       ifelse ticks-on-patch >= actionTime
@@ -308,6 +308,13 @@ to move-in-line
         set ticks-on-patch ticks-on-patch + 1
       ]
 
+    ]
+    [
+    ;;code here with a chance to go to a other queue
+      let chance random 10
+      if chance <= 3 [
+      go-to-line
+      ]
     ]
   ]
 
@@ -1080,7 +1087,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

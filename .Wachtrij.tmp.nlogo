@@ -118,15 +118,15 @@ to go
   if count1 < 2 or count2 < 2 or count3 < 2 [stop]
 
   ;;variable
-  if ticks >= 60 * 1 [set tickspercustomer 5]
-  if ticks >= 60 * 2 [set tickspercustomer 4]
-  if ticks >= 60 * 3 [set tickspercustomer 3]
-  if ticks >= 60 * 4 [set tickspercustomer 1]
-  if ticks >= 60 * 5 [set tickspercustomer 1]
-  if ticks >= 60 * 6 [set tickspercustomer 4]
-  if ticks >= 60 * 7 [set tickspercustomer 5]
+  if ticks >= 60 * 1 [set tickspercustomer 6]
+  if ticks >= 60 * 2 [set tickspercustomer 5]
+  if ticks >= 60 * 3 [set tickspercustomer 4]
+  if ticks >= 60 * 4 [set tickspercustomer 2]
+  if ticks >= 60 * 5 [set tickspercustomer 2]
+  if ticks >= 60 * 6 [set tickspercustomer 5]
+  if ticks >= 60 * 7 [set tickspercustomer 6]
 
-  if customersdone = 2 [stop]
+  if customersdone = 180 [stop]
   if remainder ticks tickspercustomer = 0 and ticks <= 480[
     create-customers 1 [
       set shape "person business"
@@ -294,7 +294,7 @@ to move-in-line
   if xcor = 3 and worker3Break = true [set pauseBreak true]
 
   ifelse ycor + 2 = 8 [
-    if pauseBreak = false [
+    ifelse pauseBreak = false [
       set actionActive true
 
       ifelse ticks-on-patch >= actionTime
@@ -308,6 +308,13 @@ to move-in-line
         set ticks-on-patch ticks-on-patch + 1
       ]
 
+    ]
+    [
+    ;;code here with a chance to go to a other queue
+      let chance random 10
+      if chance <=  [
+      go-to-line
+      ]
     ]
   ]
 
@@ -579,7 +586,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-13
+123
 1
 0
 String
@@ -590,7 +597,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-13
+12
 1
 0
 String
@@ -601,7 +608,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-23
+13
 1
 0
 String
@@ -612,7 +619,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-23
+1
 1
 0
 String
@@ -1080,7 +1087,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
