@@ -118,15 +118,15 @@ to go
   if count1 < 2 or count2 < 2 or count3 < 2 [stop]
 
   ;;variable
-  if ticks >= 60 * 1 [set tickspercustomer 5]
-  if ticks >= 60 * 2 [set tickspercustomer 4]
-  if ticks >= 60 * 3 [set tickspercustomer 3]
-  if ticks >= 60 * 4 [set tickspercustomer 1]
-  if ticks >= 60 * 5 [set tickspercustomer 1]
-  if ticks >= 60 * 6 [set tickspercustomer 4]
-  if ticks >= 60 * 7 [set tickspercustomer 5]
+  if ticks >= 60 * 1 [set tickspercustomer 6]
+  if ticks >= 60 * 2 [set tickspercustomer 5]
+  if ticks >= 60 * 3 [set tickspercustomer 4]
+  if ticks >= 60 * 4 [set tickspercustomer 2]
+  if ticks >= 60 * 5 [set tickspercustomer 2]
+  if ticks >= 60 * 6 [set tickspercustomer 5]
+  if ticks >= 60 * 7 [set tickspercustomer 6]
 
-  if customersdone = 255 [stop]
+  if customersdone = 180 [stop]
   if remainder ticks tickspercustomer = 0 and ticks <= 480[
     create-customers 1 [
       set shape "person business"
@@ -579,7 +579,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-13
+123
 1
 0
 String
@@ -590,7 +590,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-13
+12
 1
 0
 String
@@ -601,7 +601,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-23
+13
 1
 0
 String
@@ -612,7 +612,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-23
+1
 1
 0
 String
