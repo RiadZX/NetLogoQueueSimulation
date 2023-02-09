@@ -54,6 +54,8 @@ to setup
   set worker2Break false
   set worker3Break false
 
+
+
   ask patches [
     set pcolor 33
   ]
@@ -73,7 +75,6 @@ to setup
     set ycor 8
     set shape "person service"
     set breakLength 30
-
   ]
   ask worker 0 [
     set location 0
@@ -761,6 +762,16 @@ Rectangle -6459832 true false 120 45 135 60
 Rectangle -955883 true false 105 75 120 90
 Rectangle -6459832 true false 90 75 135 90
 Rectangle -7500403 true true 90 120 105 195
+
+computer workstation
+false
+0
+Rectangle -7500403 true true 60 45 240 180
+Polygon -7500403 true true 90 180 105 195 135 195 135 210 165 210 165 195 195 195 210 180
+Rectangle -16777216 true false 75 60 225 165
+Rectangle -7500403 true true 45 210 255 255
+Rectangle -10899396 true false 249 223 237 217
+Line -16777216 false 60 225 120 225
 
 cow
 false
