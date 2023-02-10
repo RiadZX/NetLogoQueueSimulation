@@ -54,6 +54,8 @@ to setup
   set worker2Break false
   set worker3Break false
 
+
+
   ask patches [
     set pcolor 33
   ]
@@ -73,7 +75,6 @@ to setup
     set ycor 8
     set shape "person service"
     set breakLength 30
-
   ]
   ask worker 0 [
     set location 0
@@ -118,15 +119,15 @@ to go
   if count1 < 2 or count2 < 2 or count3 < 2 [stop]
 
   ;;variable
-  if ticks >= 60 * 1 [set tickspercustomer 5]
-  if ticks >= 60 * 2 [set tickspercustomer 4]
-  if ticks >= 60 * 3 [set tickspercustomer 3]
-  if ticks >= 60 * 4 [set tickspercustomer 1]
-  if ticks >= 60 * 5 [set tickspercustomer 1]
-  if ticks >= 60 * 6 [set tickspercustomer 4]
-  if ticks >= 60 * 7 [set tickspercustomer 5]
+  if ticks >= 60 * 1 [set tickspercustomer 6]
+  if ticks >= 60 * 2 [set tickspercustomer 5]
+  if ticks >= 60 * 3 [set tickspercustomer 4]
+  if ticks >= 60 * 4 [set tickspercustomer 2]
+  if ticks >= 60 * 5 [set tickspercustomer 2]
+  if ticks >= 60 * 6 [set tickspercustomer 5]
+  if ticks >= 60 * 7 [set tickspercustomer 6]
 
-  if customersdone = 255 [stop]
+  if customersdone = 180 [stop]
   if remainder ticks tickspercustomer = 0 and ticks <= 480[
     create-customers 1 [
       set shape "person business"
@@ -294,7 +295,7 @@ to move-in-line
   if xcor = 3 and worker3Break = true [set pauseBreak true]
 
   ifelse ycor + 2 = 8 [
-    if pauseBreak = false [
+    ifelse pauseBreak = false [
       set actionActive true
 
       ifelse ticks-on-patch >= actionTime
@@ -308,6 +309,13 @@ to move-in-line
         set ticks-on-patch ticks-on-patch + 1
       ]
 
+    ]
+    [
+    ;;code here with a chance to go to a other queue
+      let chance random 10
+      if chance <= 3 [
+      go-to-line
+      ]
     ]
   ]
 
@@ -522,12 +530,16 @@ done
 0.0
 500.0
 0.0
-500.0
+180.0
 true
 true
 "" ""
 PENS
 "customers" 1.0 0 -16777216 true "" "plot customersDone"
+"average1" 1.0 0 -13791810 true "" "plot averageWaitingAction1"
+"average2" 1.0 0 -2674135 true "" "plot averageWaitingAction2"
+"average3" 1.0 0 -955883 true "" "plot averageWaitingAction3"
+"total-average" 1.0 0 -6459832 true "" "plot totalwaitingtime"
 
 MONITOR
 746
@@ -579,7 +591,7 @@ INPUTBOX
 227
 111
 actionAcceptedList0
-13
+123
 1
 0
 String
@@ -590,7 +602,7 @@ INPUTBOX
 226
 178
 actionAcceptedList1
-13
+123
 1
 0
 String
@@ -601,7 +613,7 @@ INPUTBOX
 227
 245
 actionAcceptedList2
-23
+123
 1
 0
 String
@@ -612,7 +624,7 @@ INPUTBOX
 229
 312
 actionAcceptedList3
-23
+123
 1
 0
 String
@@ -750,6 +762,16 @@ Rectangle -6459832 true false 120 45 135 60
 Rectangle -955883 true false 105 75 120 90
 Rectangle -6459832 true false 90 75 135 90
 Rectangle -7500403 true true 90 120 105 195
+
+computer workstation
+false
+0
+Rectangle -7500403 true true 60 45 240 180
+Polygon -7500403 true true 90 180 105 195 135 195 135 210 165 210 165 195 195 195 210 180
+Rectangle -16777216 true false 75 60 225 165
+Rectangle -7500403 true true 45 210 255 255
+Rectangle -10899396 true false 249 223 237 217
+Line -16777216 false 60 225 120 225
 
 cow
 false
@@ -1080,7 +1102,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
