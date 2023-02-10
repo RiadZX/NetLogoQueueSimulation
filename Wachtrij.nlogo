@@ -45,17 +45,12 @@ workers-own [
 to setup
   clear-all
   reset-ticks
-
   set tickspercustomer 1
   set queueLimit 14
-
   set worker0Break false
   set worker1Break false
   set worker2Break false
   set worker3Break false
-
-
-
   ask patches [
     set pcolor 33
   ]
@@ -331,8 +326,6 @@ to move-in-line
 
 end
 
-
-;;global functions
 to calculate_waiting
   set customersWaiting0 count customers with [location = 0]
   set customersWaiting1 count customers with [location = 1]
@@ -350,7 +343,6 @@ to calculate_average
   ifelse (customersaction1) = 0 [][ set averageWaitingAction1 (sum [timeInQueue] of customers with [location = 4 and action = 1])/(count customers with [location = 4 and action = 1])]
   ifelse (customersaction2) = 0 [][ set averageWaitingAction2 (sum [timeInQueue] of customers with [location = 4 and action = 2])/(count customers with [location = 4 and action = 2])]
   ifelse (customersaction3) = 0 [][ set averageWaitingAction3 (sum [timeInQueue] of customers with [location = 4 and action = 3])/(count customers with [location = 4 and action = 3])]
-
 end
 
 to convert_actions
@@ -564,9 +556,9 @@ averageWaitingAction1
 11
 
 MONITOR
-956
+964
 223
-1160
+1168
 268
 averageWaitingAction2
 averageWaitingAction2
@@ -575,10 +567,10 @@ averageWaitingAction2
 11
 
 MONITOR
-746
-274
-947
-319
+747
+284
+948
+329
 averageWaitingAction3
 averageWaitingAction3
 3
@@ -630,10 +622,10 @@ actionAcceptedList3
 String
 
 MONITOR
-956
-274
-1165
-319
+962
+284
+1171
+329
 average Waiting Time Per customer
 totalwaitingtime
 3
@@ -1102,7 +1094,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.1
+NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

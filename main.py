@@ -1,15 +1,5 @@
 import json
 
-
-# def convert_to_float(num):
-# if type(num) == float:
-#     return num
-# if type(num) == int:
-#     return float(num)
-# if type(num) == str:
-#     return float(num.replace(',', '.'))
-
-
 # read json file
 with open('workingDataFinal.json') as f:
     runs = json.load(f)
